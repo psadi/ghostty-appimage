@@ -1,0 +1,57 @@
+---
+name: Build Ghostty AppImage
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+permissions:
+  actions: read
+  security-events: write
+  contents: write
+
+jobs:
+  build_appimage:
+    name: Build Ghostty
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu:24.04
+      options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
+    steps:
+      - name: Checkout ghostty-appimage
+        uses: actions/checkout@v4
+
+      - name: Setup Build Env
+        run: ./setup.sh
+
+      - name: Build Ghostty
+        run: ./build.sh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghostty-appimage
+          retention-days: 7
+          path: /tmp/ghostty-build/Ghostty-x86_64.AppImage
+
+  release_appimage:
+    name: "Upload binaries to current release"
+    runs-on: ubuntu-latest
+    # if: ${{ github.event_name == 'release' }}
+    needs: "build_appimage"
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghostty-appimage
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./Ghostty-x86_64.AppImage
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
