@@ -17,6 +17,10 @@ wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/a
 install appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
 rm appimagetool-x86_64.AppImage
 
+wget -q "https://github.com/TheAssassin/appimagelint/releases/download/continuous/appimagelint-x86_64.AppImage"
+install appimagelint-x86_64.AppImage /usr/local/bin/appimagelint
+rm appimagelint-x86_64.AppImage
+
 # minisign: https://github.com/jedisct1/minisign
 wget -q "https://github.com/jedisct1/minisign/releases/download/0.11/minisign-0.11-linux.tar.gz"
 tar -xzf minisign-0.11-linux.tar.gz
