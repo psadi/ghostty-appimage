@@ -40,7 +40,7 @@ jobs:
   release_appimage:
     name: "Upload binaries to current release"
     runs-on: ubuntu-latest
-    # if: ${{ github.event_name == 'release' }}
+    if: ${{ github.event_name == 'release' }}
     needs: "build_appimage"
     steps:
       - uses: actions/download-artifact@v4

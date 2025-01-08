@@ -33,19 +33,19 @@ ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
 
 # Build Ghostty with zig
 zig build \
-  --summary all \
-  --prefix "${APP_DIR}/usr" \
-  --system /tmp/offline-cache/p \
-  -Doptimize=ReleaseFast \
-  -Dcpu=baseline \
-  -Dpie=true \
-  -Demit-docs \
-  -Dversion-string="${GHOSTTY_VERSION}"
+	--summary all \
+	--prefix "${APP_DIR}/usr" \
+	--system /tmp/offline-cache/p \
+	-Doptimize=ReleaseFast \
+	-Dcpu=baseline \
+	-Dpie=true \
+	-Demit-docs \
+	-Dversion-string="${GHOSTTY_VERSION}"
 
 cd "${APP_DIR}"
 
 # prep appimage
-printf '#!/bin/sh\n\nexec "$(dirname "$(readlink -f "$0")")/usr/bin/ghostty"\n' | tee AppRun > /dev/null
+printf '#!/bin/sh\n\nexec "$(dirname "$(readlink -f "$0")")/usr/bin/ghostty"\n' | tee AppRun >/dev/null
 chmod +x AppRun
 ln -s usr/share/applications/com.mitchellh.ghostty.desktop
 ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
@@ -53,3 +53,5 @@ ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
 cd "${TMP_DIR}"
 # create app image
 ARCH=x8_64 appimagetool "${APP_DIR}"
+
+appimagelint "${TMP_DIR}/Ghostty-x86_64.AppImage" || true
