@@ -54,13 +54,13 @@ fi
 # prep appimage
 echo '#!/usr/bin/env sh
 HERE="$(dirname "$(readlink -f "$0")")"
-exec "$HERE"/ld-linux-x86-64.so.2 --library-path "$HERE"/usr/lib "$HERE"/usr/bin/ghostty "$@"' > ./AppDir/AppRun
+exec "$HERE"/ld-linux-x86-64.so.2 --library-path "$HERE"/usr/lib "$HERE"/usr/bin/ghostty "$@"' > ./AppRun
 chmod +x AppRun
 ln -s usr/share/applications/com.mitchellh.ghostty.desktop
 ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
 
 cd "${TMP_DIR}"
 # create app image
-ARCH=x8_64 appimagetool "${APP_DIR}"
+ARCH="$(uname -m)" appimagetool "${APP_DIR}"
 
 appimagelint "${TMP_DIR}/Ghostty-x86_64.AppImage" || true
