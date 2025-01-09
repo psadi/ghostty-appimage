@@ -54,6 +54,7 @@ fi
 # prep appimage
 echo '#!/usr/bin/env sh
 HERE="$(dirname "$(readlink -f "$0")")"
+export TERM=xterm-256color
 exec "$HERE"/ld-linux-x86-64.so.2 --library-path "$HERE"/usr/lib "$HERE"/usr/bin/ghostty "$@"' > ./AppRun
 chmod +x AppRun
 ln -s usr/share/applications/com.mitchellh.ghostty.desktop
