@@ -44,14 +44,24 @@ zig build \
 
 cd "${APP_DIR}"
 
+# bundle all libs
+mkdir -p ./usr/lib
+ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp -vn {} ./usr/lib
+if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
+	cp -v /lib64/ld-linux-x86-64.so.2 ./
+fi
+
 # prep appimage
-printf '#!/bin/sh\n\nexec "$(dirname "$(readlink -f "$0")")/usr/bin/ghostty"\n' | tee AppRun >/dev/null
+echo '#!/usr/bin/env sh
+HERE="$(dirname "$(readlink -f "$0")")"
+export TERM=xterm-256color
+exec "$HERE"/ld-linux-x86-64.so.2 --library-path "$HERE"/usr/lib "$HERE"/usr/bin/ghostty "$@"' > ./AppRun
 chmod +x AppRun
 ln -s usr/share/applications/com.mitchellh.ghostty.desktop
 ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
 
 cd "${TMP_DIR}"
 # create app image
-ARCH=x8_64 appimagetool "${APP_DIR}"
+ARCH="$(uname -m)" appimagetool "${APP_DIR}"
 
 appimagelint "${TMP_DIR}/Ghostty-x86_64.AppImage" || true
