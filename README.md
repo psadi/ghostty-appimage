@@ -1,10 +1,19 @@
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/psadi/ghostty-appimage/blob/main/LICENSE)
-[![Build Status](https://github.com/psadi/ghostty-appimage/actions/workflows/ci.yaml/badge.svg)](https://github.com/psadi/ghostty-appimage/actions/workflows/ci.yaml)
-
 <h1><p align="center">
   <img src="./assets/ghostty.png" alt="Ghostty Logo" width="128">
   <img src="./assets/appimage.png" alt="AppImage Logo" width="128">
-  <br>Ghostty AppImage
+  <br>Ghostty AppImage<br>
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT">
+  <img src="https://img.shields.io/github/forks/psadi/ghostty-appimage" alt="Forks">
+  <img src="https://img.shields.io/github/stars/psadi/ghostty-appimage" alt="Stars">
+  <img src="https://github.com/psadi/ghostty-appimage/actions/workflows/ci.yaml/badge.svg" alt="Build Status">
+  <img src="https://img.shields.io/github/issues/psadi/ghostty-appimage" alt="Open Issues">
+  <img src="https://img.shields.io/github/issues-pr/psadi/ghostty-appimage" alt="Pull Requests">
+  <br>
+  <img src="https://img.shields.io/github/downloads/psadi/ghostty-appimage/total" alt="GitHub Downloads (all assets, all releases)">
+  <img src="https://img.shields.io/github/downloads/psadi/ghostty-appimage/latest/total" alt="GitHub Downloads (all assets, latest release)">
+  <img src="https://img.shields.io/github/v/release/psadi/ghostty-appimage" alt="GitHub Release">
+  <img src="https://img.shields.io/github/release-date/psadi/ghostty-appimage" alt="GitHub Release Date">
+  <img src="https://img.shields.io/github/contributors/psadi/ghostty-appimage" alt="Contributors">
 </p></h1>
 
 This repository provides build scripts to create a Universal AppImage for [Ghostty](https://ghostty.org/). This unofficial build offers an executable AppImage compatible with any Linux distribution following the **x86_64 architecture**.
@@ -66,7 +75,6 @@ Since AppImages are self-contained executables, there is no formal installation 
 
 ### 🛠️ Troubleshooting
 
-- If the AppImage does not run, ensure that you have provided executable permissions.
 - If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues.
 
 ## 🤝 Contributing
