@@ -9,7 +9,7 @@ PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 
 rm -rf "${TMP_DIR}"
 
-mkdir -p -- "${TMP_DIR}" "${APP_DIR}/usr"
+mkdir -p -- "${TMP_DIR}" "${APP_DIR}/usr" "${APP_DIR}/usr/lib" "${APP_DIR}/usr/share/metainfo"
 
 cd "${TMP_DIR}"
 
@@ -45,23 +45,54 @@ zig build \
 cd "${APP_DIR}"
 
 # bundle all libs
-mkdir -p ./usr/lib
-ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp -vn {} ./usr/lib
+ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
 if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
 	cp -v /lib64/ld-linux-x86-64.so.2 ./
 fi
 
 # prep appimage
-echo '#!/usr/bin/env sh
+cat <<'EOF' >./AppRun
+#!/usr/bin/env sh
+
 HERE="$(dirname "$(readlink -f "$0")")"
+
 export TERM=xterm-256color
-exec "$HERE"/ld-linux-x86-64.so.2 --library-path "$HERE"/usr/lib "$HERE"/usr/bin/ghostty "$@"' > ./AppRun
+export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
+
+exec "${HERE}"/ld-linux-x86-64.so.2 --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
+EOF
+
 chmod +x AppRun
-ln -s usr/share/applications/com.mitchellh.ghostty.desktop
-ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png
+
+ln -s usr/share/applications/com.mitchellh.ghostty.desktop .
+ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png .
+
+sed -i 's/;TerminalEmulator;/;TerminalEmulator;Utility;/' com.mitchellh.ghostty.desktop
+
+cat <<'EOF' >./usr/share/metainfo/com.mitchellh.ghostty.appdata.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <content_rating type="oars-1.0" />
+  <description>
+    <p>
+      👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
+    </p>
+  </description>
+  <developer id="com.mitchellh">
+    <name>Mitchell Hashimoto</name>
+  </developer>
+  <icon type="remote">https://raw.githubusercontent.com/ghostty-org/ghostty/refs/heads/main/images/icons/icon_256.png</icon>
+  <id>com.mitchellh.ghostty</id>
+  <launchable type="desktop-id">com.mitchellh.ghostty.desktop</launchable>
+  <metadata_license>MIT</metadata_license>
+  <name>Ghostty</name>
+  <project_license>MIT</project_license>
+  <summary>A terminal emulator</summary>
+  <url type="homepage">https://ghostty.org</url>
+</component>
+EOF
 
 cd "${TMP_DIR}"
+
 # create app image
 ARCH="$(uname -m)" appimagetool "${APP_DIR}"
-
-appimagelint "${TMP_DIR}/Ghostty-x86_64.AppImage" || true

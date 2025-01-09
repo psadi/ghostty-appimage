@@ -9,9 +9,7 @@
 
 This repository provides build scripts to create a Universal AppImage for [Ghostty](https://ghostty.org/). This unofficial build offers an executable AppImage compatible with any Linux distribution following the **x86_64 architecture**.
 
-
 **Ghostty Source Code:** [Click Here](https://github.com/ghostty-org/ghostty)
-
 
 ## 🚀 Quick Start
 
@@ -60,11 +58,11 @@ Since AppImages are self-contained executables, there is no formal installation 
 1. Submit AppImage(s) to [AppImageHub](https://appimage.github.io/).
 2. Provide AppImages for other supported architectures.
 
-    | **Architecture** | **Support** |
-    |------------------|-------------|
-    | x86_64           | ✅          |
-    | i386             | ❌          |
-    | ARM              | ❌          |
+   |  #  | **Architecture** | **Status** |
+   | :-: | ---------------- | :--------: |
+   |  1  | x86_64           |     ✅     |
+   |  2  | i386             |     🟠     |
+   |  3  | ARM              |     🟠     |
 
 ### 🛠️ Troubleshooting
 
