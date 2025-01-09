@@ -47,7 +47,9 @@ cd "${APP_DIR}"
 # bundle all libs
 mkdir -p ./usr/lib
 ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp -vn {} ./usr/lib
-mv ./usr/lib/ld-linux-x86-64.so.2 ./
+if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
+	cp -v /lib64/ld-linux-x86-64.so.2 ./
+fi
 
 # prep appimage
 echo '#!/usr/bin/env sh
