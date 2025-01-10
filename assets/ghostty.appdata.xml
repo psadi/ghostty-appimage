@@ -5,6 +5,7 @@
   <metadata_license>MIT</metadata_license>
   <project_license>MIT</project_license>
   <name>Ghostty</name>
+  <icon type="remote">https://raw.githubusercontent.com/ghostty-org/ghostty/refs/heads/main/images/icons/icon_256.png</icon>
   <summary>Fast, native, feature-rich terminal emulator pushing modern features</summary>
   <description>
     <p>
