@@ -18,13 +18,12 @@ TMP_DIR="/tmp/ghostty-build"
 APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
+APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
 
 rm -rf "${TMP_DIR}"
 
 mkdir -p -- "${TMP_DIR}" "${APP_DIR}/usr" "${APP_DIR}/usr/lib" "${APP_DIR}/usr/share/metainfo"
 
-# TODO: remove
-echo $PWD
 cd "${TMP_DIR}"
 
 wget -q "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
@@ -56,9 +55,7 @@ zig build \
 	-Demit-docs \
 	-Dversion-string="${GHOSTTY_VERSION}"
 
-# TODO: remove
-echo $PWD
-cp "assets/ghostty.appdata.xml" "${APP_DIR}/usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
+cp "${APPDATA_FILE=}" "${APP_DIR}/usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
 
 cd "${APP_DIR}"
 
