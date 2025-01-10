@@ -30,3 +30,9 @@ repos:
     rev: v1.7.6
     hooks:
       - id: actionlint-system
+
+  - repo: https://github.com/woodruffw/zizmor
+    rev: v0.5.0
+    hooks:
+      - id: zizmor
+        files: ^\.github/workflows/.*\.ya?ml$
