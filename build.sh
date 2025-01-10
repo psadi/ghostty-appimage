@@ -3,11 +3,20 @@
 set -e
 
 export ARCH="$(uname -m)"
-GHOSTTY_VERSION="1.0.1"
+
+if command -v jq >/dev/null 2>&1; then
+	GHOSTTY_VERSION="$(
+		curl -s https://api.github.com/repos/ghostty-org/ghostty/tags |
+			jq '[.[] | select(.name != "tip") | .name | ltrimstr("v")] | sort_by(split(".") | map(tonumber)) | last'
+	)"
+else
+	GHOSTTY_VERSION="1.0.1"
+fi
+
 TMP_DIR="/tmp/ghostty-build"
 APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
-UPINFO="gh-releases-zsync|$(echo "$GITHUB_REPOSITORY" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
+UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 
 rm -rf "${TMP_DIR}"
 
@@ -44,6 +53,8 @@ zig build \
 	-Demit-docs \
 	-Dversion-string="${GHOSTTY_VERSION}"
 
+cp "assets/ghostty.appdata.xml" "${APP_DIR}/usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
+
 cd "${APP_DIR}"
 
 # bundle all libs
@@ -70,29 +81,6 @@ ln -s usr/share/applications/com.mitchellh.ghostty.desktop .
 ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png .
 
 sed -i 's/;TerminalEmulator;/;TerminalEmulator;Utility;/' com.mitchellh.ghostty.desktop
-
-cat <<'EOF' >./usr/share/metainfo/com.mitchellh.ghostty.appdata.xml
-<?xml version="1.0" encoding="UTF-8"?>
-<component type="desktop-application">
-  <content_rating type="oars-1.0" />
-  <description>
-    <p>
-      👻 Ghostty is a fast, feature-rich, and cross-platform terminal emulator that uses platform-native UI and GPU acceleration.
-    </p>
-  </description>
-  <developer id="com.mitchellh">
-    <name>Mitchell Hashimoto</name>
-  </developer>
-  <icon type="remote">https://raw.githubusercontent.com/ghostty-org/ghostty/refs/heads/main/images/icons/icon_256.png</icon>
-  <id>com.mitchellh.ghostty</id>
-  <launchable type="desktop-id">com.mitchellh.ghostty.desktop</launchable>
-  <metadata_license>MIT</metadata_license>
-  <name>Ghostty</name>
-  <project_license>MIT</project_license>
-  <summary>A terminal emulator</summary>
-  <url type="homepage">https://ghostty.org</url>
-</component>
-EOF
 
 cd "${TMP_DIR}"
 
