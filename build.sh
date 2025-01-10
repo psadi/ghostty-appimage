@@ -62,9 +62,25 @@ cd "${APP_DIR}"
 
 # bundle all libs
 ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
-cp -v /usr/lib/x86_64-linux-gnu/libpthread.so.0 ./usr/lib
-if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
-	cp -v /lib64/ld-linux-x86-64.so.2 ./
+
+# ld-linux contains x86-64 instead of x86_64
+case "${ARCH}" in
+"x86_64")
+	ld_linux="ld-linux-x86-64.so.2"
+	;;
+"aarch64")
+	ld_linux="ld-linux-aarch64.so.1"
+	;;
+*)
+	echo "Unsupported ARCH: '${ARCH}'"
+	exit 1
+	;;
+esac
+
+cp -v /usr/lib/${ARCH}-linux-gnu/libpthread.so.0 ./usr/lib
+
+if ! mv ./usr/lib/${ld_linux} ./ld-linux.so; then
+	cp -v /usr/lib/${ARCH}-linux-gnu/${ld_linux} ./ld-linux.so
 fi
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
@@ -76,11 +92,11 @@ HERE="$(dirname "$(readlink -f "$0")")"
 export TERM=xterm-256color
 export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
 
-exec "${HERE}"/ld-linux-x86-64.so.2 --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
+exec "${HERE}"/ld-linux.so --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
 
 if [ "$?" -gt 0 ] && [ -n "$WAYLAND_DISPLAY" ]; then
 	export GDK_BACKEND=x11
-	exec "${HERE}"/ld-linux-x86-64.so.2 --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
+	exec "${HERE}"/ld-linux.so --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
 fi
 EOF
 
