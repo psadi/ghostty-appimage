@@ -81,6 +81,8 @@ chmod +x AppRun
 
 ln -s usr/share/applications/com.mitchellh.ghostty.desktop .
 ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png .
+# Fix Gnome dock issues
+ln -s "com.mitchellh.ghostty.desktop" "${APP_DIR}/usr/share/applications/ghostty.desktop"
 
 sed -i 's/;TerminalEmulator;/;TerminalEmulator;Utility;/' com.mitchellh.ghostty.desktop
 
