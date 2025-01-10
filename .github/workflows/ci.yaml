@@ -36,7 +36,7 @@ jobs:
         with:
           name: ghostty-appimage
           retention-days: 7
-          path: /tmp/ghostty-build/Ghostty-x86_64.AppImage
+          path: /tmp/ghostty-build/Ghostty-x86_64.AppImage*
 
   release_appimage:
     permissions:
@@ -56,7 +56,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Ghostty-x86_64.AppImage
+          file: ./Ghostty-x86_64.AppImage*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true

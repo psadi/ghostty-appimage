@@ -57,10 +57,15 @@ chmod +x Ghostty-x86_64.AppImage
 
 Since AppImages are self-contained executables, there is no formal installation process beyond setting executable permissions.
 
-**To update:**
+**To update manually:**
 
-1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
-2. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
+  1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
+  2. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
+
+**Update automatically:**
+
+  1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
+  2. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
 
 ## ❓ What's Next?
 

@@ -2,10 +2,12 @@
 
 set -e
 
+export ARCH="$(uname -m)"
 GHOSTTY_VERSION="1.0.1"
 TMP_DIR="/tmp/ghostty-build"
 APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
+UPINFO="gh-releases-zsync|$(echo "$GITHUB_REPOSITORY" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 
 rm -rf "${TMP_DIR}"
 
@@ -95,4 +97,4 @@ EOF
 cd "${TMP_DIR}"
 
 # create app image
-ARCH="$(uname -m)" appimagetool "${APP_DIR}"
+appimagetool -u "${UPINFO}" "${APP_DIR}"
