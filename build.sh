@@ -23,6 +23,8 @@ rm -rf "${TMP_DIR}"
 
 mkdir -p -- "${TMP_DIR}" "${APP_DIR}/usr" "${APP_DIR}/usr/lib" "${APP_DIR}/usr/share/metainfo"
 
+# TODO: remove
+echo $PWD
 cd "${TMP_DIR}"
 
 wget -q "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
@@ -54,6 +56,8 @@ zig build \
 	-Demit-docs \
 	-Dversion-string="${GHOSTTY_VERSION}"
 
+# TODO: remove
+echo $PWD
 cp "assets/ghostty.appdata.xml" "${APP_DIR}/usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
 
 cd "${APP_DIR}"
