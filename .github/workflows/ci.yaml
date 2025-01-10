@@ -8,13 +8,12 @@ on:
   release:
     types: [published]
 
-permissions:
-  actions: read
-  security-events: write
-  contents: write
-
 jobs:
   build_appimage:
+    permissions:
+      actions: read
+      security-events: write
+      contents: write
     name: Build Ghostty
     runs-on: ubuntu-24.04
     container:
@@ -23,6 +22,8 @@ jobs:
     steps:
       - name: Checkout ghostty-appimage
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Build Env
         run: ./setup.sh
@@ -38,6 +39,10 @@ jobs:
           path: /tmp/ghostty-build/Ghostty-x86_64.AppImage
 
   release_appimage:
+    permissions:
+      actions: read
+      security-events: write
+      contents: write
     name: "Upload binaries to current release"
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'release' }}
