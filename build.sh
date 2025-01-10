@@ -4,6 +4,7 @@ set -e
 
 export ARCH="$(uname -m)"
 
+# Detect latest version numbers when jq is available.
 if command -v jq >/dev/null 2>&1; then
 	GHOSTTY_VERSION="$(
 		curl -s https://api.github.com/repos/ghostty-org/ghostty/tags |
