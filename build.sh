@@ -62,9 +62,21 @@ cd "${APP_DIR}"
 
 # bundle all libs
 ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
-if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
-	cp -v /lib64/ld-linux-x86-64.so.2 ./
+
+# ld-linux contains x86-64 instead of x86_64. 
+if [ "$ARCH" = "x86_64" ]; then
+	if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./ld-linux.so; then
+		cp -v /lib64/ld-linux-x86-64.so.2 ./ld-linux.so
+	fi
+elif [ "$ARCH" = "aarch64" ]; then
+	if ! mv ./usr/lib/ld-linux-aarch64.so.2 ./ld-linux.so; then
+		cp -v /lib64/ld-linux-aarch64.so.2 ./ld-linux.so
+	fi
+else
+	exit 1
 fi
+
+	
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
 cat <<'EOF' >./AppRun
@@ -75,7 +87,7 @@ HERE="$(dirname "$(readlink -f "$0")")"
 export TERM=xterm-256color
 export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
 
-exec "${HERE}"/ld-linux-x86-64.so.2 --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
+exec "${HERE}"/ld-linux.so --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
 EOF
 
 chmod +x AppRun
