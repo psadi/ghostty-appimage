@@ -19,6 +19,7 @@ APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
+DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
 
 rm -rf "${TMP_DIR}"
 
@@ -31,7 +32,7 @@ wget -q "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_
 
 minisign -V -m "ghostty-${GHOSTTY_VERSION}.tar.gz" -P "${PUB_KEY}" -s "ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 
-rm ghostty-${GHOSTTY_VERSION}.tar.gz.minisig
+rm "ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 
 tar -xzmf "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
@@ -55,8 +56,6 @@ zig build \
 	-Demit-docs \
 	-Dversion-string="${GHOSTTY_VERSION}"
 
-cp "${APPDATA_FILE=}" "${APP_DIR}/usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
-
 cd "${APP_DIR}"
 
 # bundle all libs
@@ -65,7 +64,7 @@ if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
 	cp -v /lib64/ld-linux-x86-64.so.2 ./
 fi
 
-# prep appimage
+# Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
 cat <<'EOF' >./AppRun
 #!/usr/bin/env sh
 
@@ -79,12 +78,15 @@ EOF
 
 chmod +x AppRun
 
-ln -s usr/share/applications/com.mitchellh.ghostty.desktop .
-ln -s usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png .
-# Fix Gnome dock issues
-ln -s "com.mitchellh.ghostty.desktop" "${APP_DIR}/usr/share/applications/ghostty.desktop"
+cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
 
-sed -i 's/;TerminalEmulator;/;TerminalEmulator;Utility;/' com.mitchellh.ghostty.desktop
+# Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
+cp "${DESKTOP_FILE}" "usr/share/applications/com.mitchellh.ghostty.desktop"
+# WezTerm has this, it might be useful.
+ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
+
+ln -s "usr/share/applications/com.mitchellh.ghostty.desktop" .
+ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
 cd "${TMP_DIR}"
 
