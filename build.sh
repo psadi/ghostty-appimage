@@ -80,6 +80,12 @@ EOF
 
 chmod +x AppRun
 
+export VERSION="$(./AppRun --version 2>/dev/null | awk 'FNR==1 {print $2}')"
+if [ -z "$VERSION" ]; then
+	echo "ERROR: Could not get version from ghostty binary"
+	exit 1
+fi
+
 cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
 
 # Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
