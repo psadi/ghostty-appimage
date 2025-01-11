@@ -69,8 +69,8 @@ if [ "$ARCH" = "x86_64" ]; then
 		cp -v /lib64/ld-linux-x86-64.so.2 ./ld-linux.so
 	fi
 elif [ "$ARCH" = "aarch64" ]; then
-	if ! mv ./usr/lib/ld-linux-aarch64.so.2 ./ld-linux.so; then
-		cp -v /lib64/ld-linux-aarch64.so.2 ./ld-linux.so
+	if ! mv ./usr/lib/ld-linux-aarch64.so.1 ./ld-linux.so; then
+		cp -v /lib64/ld-linux-aarch64.so.1 ./ld-linux.so
 	fi
 else
 	exit 1
