@@ -1,43 +1,46 @@
 ---
 name: Build
-
 on:
   workflow_dispatch: {}
   pull_request:
     types: [opened, synchronize, reopened]
   release:
     types: [published]
-
 jobs:
   build_appimage:
     permissions:
       actions: read
       security-events: write
       contents: write
-    name: Build Ghostty
+    name: Build Ghostty (${{ matrix.arch }})
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
     container:
       image: ubuntu:24.04
       options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
     steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        continue-on-error: true
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        continue-on-error: true
       - name: Checkout ghostty-appimage
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-
       - name: Setup Build Env
         run: ./setup.sh
-
       - name: Build Ghostty
         run: ./build.sh
-
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ghostty-appimage
+          name: ghostty-appimage-${{ matrix.arch }}
           retention-days: 7
-          path: /tmp/ghostty-build/Ghostty-*-x86_64.AppImage*
-
+          path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
   release_appimage:
     permissions:
       actions: read
@@ -50,13 +53,13 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: ghostty-appimage
-
+          pattern: ghostty-appimage-*
+          merge-multiple: true
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Ghostty-*-x86_64.AppImage*
+          file: ./Ghostty-*-*.AppImage*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
