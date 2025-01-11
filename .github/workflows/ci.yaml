@@ -16,16 +16,20 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        arch: [x86_64, aarch64]
+        include:
+          - arch: x86_64
+            platform: linux/amd64
+          - arch: aarch64
+            platform: linux/arm64
     container:
       image: ubuntu:24.04
-      options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
+      options: "--platform ${{ matrix.platform }} --privileged --cap-add SYS_ADMIN --device /dev/fuse"
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        continue-on-error: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        continue-on-error: true
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
         continue-on-error: true
       - name: Checkout ghostty-appimage
         uses: actions/checkout@v4
