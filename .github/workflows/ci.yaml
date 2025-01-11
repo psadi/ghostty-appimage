@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
   release:
     types: [published]
+
 jobs:
   build_appimage:
     permissions:
@@ -16,22 +17,22 @@ jobs:
     strategy:
       matrix:
         include:
+          - arch: aarch64
+            platform: linux/arm64        
           - arch: x86_64
             platform: linux/amd64
-          - arch: aarch64
-            platform: linux/arm64
     steps:
       - name: Checkout ghostty-appimage
         uses: actions/checkout@v4
         with:
           persist-credentials: false
-          
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        continue-on-error: true
-        
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        continue-on-error: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
         continue-on-error: true
         
       - name: Build in Docker
@@ -41,15 +42,18 @@ jobs:
             --device /dev/fuse \
             --platform ${{ matrix.platform }} \
             -v ${{ github.workspace }}:/work \
+            -v /tmp:/tmp \
             -w /work \
             ubuntu:24.04 \
             bash -c "./setup.sh && ./build.sh"
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ghostty-appimage-${{ matrix.arch }}
           retention-days: 7
           path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
+
   release_appimage:
     permissions:
       actions: read
@@ -64,6 +68,7 @@ jobs:
         with:
           pattern: ghostty-appimage-*
           merge-multiple: true
+
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
