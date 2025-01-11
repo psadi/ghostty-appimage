@@ -4,20 +4,22 @@ set -e
 
 export DEBIAN_FRONTEND="noninteractive"
 
+ZIG_VERSION="0.13.0"
+MINISIGN_URL="https://github.com/jedisct1/minisign/releases/download/0.11/minisign-0.11-linux.tar.gz"
+
 # Detect latest version numbers when jq is available.
 if command -v jq >/dev/null 2>&1; then
-	ZIG_VERSION="$(
-		curl -s "https://ziglang.org/download/index.json" |
-			jq -r '[keys[] | select(. != "master" and contains("."))] | sort_by(split(".") | map(tonumber)) | last'
-	)"
-	MINISIGN_URL="$(
-		curl -s "https://api.github.com/repos/jedisct1/minisign/releases/latest" |
-			jq -r --arg prefix "minisign" --arg suffix "linux.tar.gz" \
-				'.assets[] | select(.name | startswith($prefix) and endswith($suffix)) | .browser_download_url'
-	)"
-else
-	ZIG_VERSION="0.13.0"
-	MINISIGN_URL="https://github.com/jedisct1/minisign/releases/download/0.11/minisign-0.11-linux.tar.gz"
+	if [ "$1" = "latest" ]; then
+		ZIG_VERSION="$(
+			curl -s "https://ziglang.org/download/index.json" |
+				jq -r '[keys[] | select(. != "master" and contains("."))] | sort_by(split(".") | map(tonumber)) | last'
+		)"
+		MINISIGN_URL="$(
+			curl -s "https://api.github.com/repos/jedisct1/minisign/releases/latest" |
+				jq -r --arg prefix "minisign" --arg suffix "linux.tar.gz" \
+					'.assets[] | select(.name | startswith($prefix) and endswith($suffix)) | .browser_download_url'
+		)"
+	fi
 fi
 
 # update & install os base dependencies
