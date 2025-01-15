@@ -76,6 +76,11 @@ export TERM=xterm-256color
 export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
 
 exec "${HERE}"/ld-linux-x86-64.so.2 --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
+
+if [ "$?" -gt 0 ] && [ -n "$WAYLAND_DISPLAY" ]; then
+	export GDK_BACKEND=x11
+	exec "${HERE}"/ld-linux-x86-64.so.2 --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
+fi
 EOF
 
 chmod +x AppRun
