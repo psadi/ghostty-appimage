@@ -62,6 +62,7 @@ cd "${APP_DIR}"
 
 # bundle all libs
 ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
+cp -v /usr/lib/x86_64-linux-gnu/libpthread.so.0 ./usr/lib
 if ! mv ./usr/lib/ld-linux-x86-64.so.2 ./; then
 	cp -v /lib64/ld-linux-x86-64.so.2 ./
 fi
