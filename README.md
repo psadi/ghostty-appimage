@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/github/contributors/psadi/ghostty-appimage" alt="Contributors">
 </p></h1>
 
-This repository provides build scripts to create a Universal AppImage for [Ghostty](https://ghostty.org/). This unofficial build offers an executable AppImage compatible with any Linux distribution following the **x86_64 architecture**.
+This repository provides build scripts to create a Universal AppImage for [Ghostty](https://ghostty.org/). This unofficial build offers an executable AppImage compatible with any Linux distribution.
 
 **Ghostty Source Code:** [Click Here](https://github.com/ghostty-org/ghostty)
 
@@ -32,13 +32,28 @@ This repository provides build scripts to create a Universal AppImage for [Ghost
 Run the following commands in your terminal:
 
 ```bash
-# Download the latest AppImage package
-wget https://github.com/psadi/ghostty-appimage/releases/download/[TAG]/Ghostty-x86_64.AppImage
-# Provide executable permissions
+# Download the latest AppImage package from releases
+wget https://github.com/psadi/ghostty-appimage/releases/download/${TAG}/Ghostty-x86_64.AppImage
+
+# Make the AppImage executable
 chmod +x Ghostty-x86_64.AppImage
-# Execute the AppImage
+
+# Run the AppImage
 ./Ghostty-x86_64.AppImage
+
+# Optionally, add the AppImage to your PATH for easier access
+
+# With sudo for system wide availability
+sudo install ./Ghostty-x86_64.AppImage /usr/local/bin/ghostty
+
+# Without sudo, XDG base spec mandate
+install ./Ghostty-x86_64.AppImage $HOME/.local/bin/ghostty
+
+# Now you can run Ghostty from anywhere using the command:
+# ghostty
 ```
+
+_**Note:** By using [**AM**](https://github.com/ivan-hc/AM)/[**AppMan**](https://github.com/ivan-hc/AppMan), **PATH** config done automatically when you install appimages with it._
 
 ### Graphical
 
@@ -57,26 +72,35 @@ chmod +x Ghostty-x86_64.AppImage
 
 Since AppImages are self-contained executables, there is no formal installation process beyond setting executable permissions.
 
-**To update manually:**
+**Update manually:**
 
-  1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
-  2. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
+1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
+2. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
 
 **Update automatically:**
 
-  1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
-  2. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
+1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
+2. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
+
+## 🖥️ Supported System Architectures
+
+This AppImage supports the following architectures:
+
+| **#** | **Architecture** | **Status** | **Availability** |
+| :---: | ---------------- | :--------: | ---------------- |
+|   1   | x86_64           |     🟢     | Available        |
+|   2   | aarch64          |     🟢     | Available        |
+
+**Notes:**
+
+- **x86_64**: Widely used in modern desktops and servers, supporting 64-bit processing.
+- **aarch64**: 64-bit ARM architecture, planned for future support in cloud computing environments.
 
 ## ❓ What's Next?
 
-1. Submit AppImage(s) to [AppImageHub](https://appimage.github.io/).
-2. Provide AppImages for other supported architectures.
-
-   |  #  | **Architecture** | **Status** |
-   | :-: | ---------------- | :--------: |
-   |  1  | x86_64           |     ✅     |
-   |  2  | i386             |     🟠     |
-   |  3  | ARM              |     🟠     |
+- [x] Provide AppImages for other supported architectures
+- [ ] Submit AppImage(s) to [AppImageHub](https://appimage.github.io/)
+- [ ] Dependency caching in ci for a faster release cycle
 
 ### 🛠️ Troubleshooting
 

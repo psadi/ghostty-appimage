@@ -1,6 +1,4 @@
----
 name: Build
-
 on:
   workflow_dispatch: {}
   pull_request:
@@ -14,10 +12,19 @@ jobs:
       actions: read
       security-events: write
       contents: write
-    name: Build Ghostty
-    runs-on: ubuntu-24.04
+    name: Build Ghostty (${{ matrix.arch }})
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            platform: linux/arm64
+            runs-on: ubuntu-24.04-arm
+          - arch: x86_64
+            platform: linux/amd64
+            runs-on: ubuntu-24.04
     container:
-      image: ubuntu:24.04
+      image: ${{ matrix.arch == 'aarch64' && 'arm64v8/ubuntu:24.04' || 'ubuntu:24.04' }}
       options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
     steps:
       - name: Checkout ghostty-appimage
@@ -34,9 +41,12 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ghostty-appimage
+          name: ghostty-appimage-${{ matrix.arch }}
           retention-days: 7
-          path: /tmp/ghostty-build/Ghostty-*-x86_64.AppImage*
+          path: /tmp/ghostty-build/Ghostty-*.AppImage*
+
+    outputs:
+      arch: ${{ matrix.arch }}
 
   release_appimage:
     permissions:
@@ -50,13 +60,13 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: ghostty-appimage
+          name: ghostty-appimage-${{ needs.build_appimage.outputs.arch }}
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Ghostty-*-x86_64.AppImage*
+          file: ./Ghostty-*.AppImage*
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
