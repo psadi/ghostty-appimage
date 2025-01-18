@@ -53,10 +53,13 @@ jobs:
       actions: read
       security-events: write
       contents: write
-    name: "Upload binaries to current release"
+    name: Upload binaries to release (${{ matrix.arch }})
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'release' }}
     needs: "build_appimage"
+    strategy:
+      matrix:
+        arch: [aarch64, x86_64]
     steps:
       - uses: actions/download-artifact@v4
         with:
