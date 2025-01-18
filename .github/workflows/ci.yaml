@@ -43,7 +43,7 @@ jobs:
         with:
           name: ghostty-appimage-${{ matrix.arch }}
           retention-days: 7
-          path: /tmp/ghostty-build/Ghostty-*.AppImage*
+          path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
 
     outputs:
       arch: ${{ matrix.arch }}
@@ -53,10 +53,13 @@ jobs:
       actions: read
       security-events: write
       contents: write
-    name: "Upload binaries to current release"
+    name: Upload binaries to release (${{ matrix.arch }})
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'release' }}
     needs: "build_appimage"
+    strategy:
+      matrix:
+        arch: [aarch64, x86_64]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -66,7 +69,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./Ghostty-*.AppImage*
+          file: ./Ghostty-*-${{ matrix.arch }}.AppImage*
           tag: ${{ github.ref }}
-          overwrite: true
           file_glob: true
