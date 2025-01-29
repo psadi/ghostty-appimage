@@ -27,33 +27,48 @@ This repository provides build scripts to create a Universal AppImage for [Ghost
 
 ## ⚙️ Installation
 
-### Command Line
+### Command Line (Manual)
 
 Run the following commands in your terminal:
 
 ```bash
 # Download the latest AppImage package from releases
-wget https://github.com/psadi/ghostty-appimage/releases/download/${TAG}/Ghostty-x86_64.AppImage
+wget https://github.com/psadi/ghostty-appimage/releases/download/${VERSION}/Ghostty-${VERSION}-${ARCH}.AppImage
 
 # Make the AppImage executable
-chmod +x Ghostty-x86_64.AppImage
+chmod +x Ghostty-${VERSION}-${ARCH}.AppImage
 
 # Run the AppImage
-./Ghostty-x86_64.AppImage
+./Ghostty-${VERSION}-${ARCH}.AppImage
 
 # Optionally, add the AppImage to your PATH for easier access
 
 # With sudo for system wide availability
-sudo install ./Ghostty-x86_64.AppImage /usr/local/bin/ghostty
+sudo install ./Ghostty-${VERSION}-${ARCH}.AppImage /usr/local/bin/ghostty
 
 # Without sudo, XDG base spec mandate
-install ./Ghostty-x86_64.AppImage $HOME/.local/bin/ghostty
+install ./Ghostty-${VERSION}-${ARCH}.AppImage $HOME/.local/bin/ghostty
 
 # Now you can run Ghostty from anywhere using the command:
 # ghostty
 ```
 
-_**Note:** By using [**AM**](https://github.com/ivan-hc/AM)/[**AppMan**](https://github.com/ivan-hc/AppMan), **PATH** config done automatically when you install appimages with it._
+**Note:** By using [**AM**](https://github.com/ivan-hc/AM)/[**AppMan**](https://github.com/ivan-hc/AppMan), **PATH** config done automatically when you install appimages with it.
+
+### Command Line (Auto)
+
+Ghostty AppImage is also available via [**Soar**](https://github.com/pkgforge/soar) which automatically handles the install, upgrade and desktop integration process
+
+```bash
+# Install
+soar install ghostty
+
+# Upgrade
+soar update ghostty
+
+# Uninstall
+soar remove ghostty
+```
 
 ### Graphical
 
@@ -75,12 +90,12 @@ Since AppImages are self-contained executables, there is no formal installation 
 **Update manually:**
 
 1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
-2. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
+1. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
 
 **Update automatically:**
 
 1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
-2. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
+1. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
 
 ## 🖥️ Supported System Architectures
 
@@ -104,7 +119,23 @@ This AppImage supports the following architectures:
 
 ### 🛠️ Troubleshooting
 
-- If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues.
+**Known Issues**
+
+1. **Failed to create EGL Display**
+   **Fix (Interim):** Fallback to x11 backend by running the AppImage from one of the below following options,
+
+   ```bash
+   # Option 1
+   ❯ GDK_BACKEND=x11 ./Ghostty-${VERSION}-${ARCH}.AppImage
+
+   # Option 2
+   ❯ export GDK_BACKEND=x11
+   ❯ ./Ghostty-${VERSION}-${ARCH}.AppImage
+
+   # Option 3: Add `export GDK_BACKEND=x11` to your .bashrc or .zshrc and launch the appimage normally
+   ```
+
+_If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues_
 
 ## 🤝 Contributing
 
