@@ -4,7 +4,7 @@ set -e
 
 export ARCH="$(uname -m)"
 
-GHOSTTY_VERSION="1.0.1"
+GHOSTTY_VERSION="1.1.0"
 
 # Detect latest version numbers when jq is available.
 if command -v jq >/dev/null 2>&1; then
@@ -42,7 +42,7 @@ rm "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
 cd "${TMP_DIR}/ghostty-${GHOSTTY_VERSION}"
 
-sed -i 's/linkSystemLibrary2("bzip2", dynamic_link_opts)/linkSystemLibrary2("bz2", dynamic_link_opts)/' build.zig
+sed -i 's/linkSystemLibrary2("bzip2", dynamic_link_opts)/linkSystemLibrary2("bz2", dynamic_link_opts)/' src/build/SharedDeps.zig
 
 # Fetch Zig Cache
 ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
