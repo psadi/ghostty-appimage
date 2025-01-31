@@ -88,6 +88,7 @@ cat <<'EOF' >./AppRun
 #!/usr/bin/env sh
 
 HERE="$(dirname "$(readlink -f "$0")")"
+unset ARGV0
 
 export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
 
