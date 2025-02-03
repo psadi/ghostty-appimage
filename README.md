@@ -33,21 +33,21 @@ Run the following commands in your terminal:
 
 ```bash
 # Download the latest AppImage package from releases
-wget https://github.com/psadi/ghostty-appimage/releases/download/${TAG}/Ghostty-x86_64.AppImage
+wget https://github.com/psadi/ghostty-appimage/releases/download/${VERSION}/Ghostty-${VERSION}-${ARCH}.AppImage
 
 # Make the AppImage executable
-chmod +x Ghostty-x86_64.AppImage
+chmod +x Ghostty-${VERSION}-${ARCH}.AppImage
 
 # Run the AppImage
-./Ghostty-x86_64.AppImage
+./Ghostty-${VERSION}-${ARCH}.AppImage
 
 # Optionally, add the AppImage to your PATH for easier access
 
 # With sudo for system wide availability
-sudo install ./Ghostty-x86_64.AppImage /usr/local/bin/ghostty
+sudo install ./Ghostty-${VERSION}-${ARCH}.AppImage /usr/local/bin/ghostty
 
 # Without sudo, XDG base spec mandate
-install ./Ghostty-x86_64.AppImage $HOME/.local/bin/ghostty
+install ./Ghostty-${VERSION}-${ARCH}.AppImage $HOME/.local/bin/ghostty
 
 # Now you can run Ghostty from anywhere using the command:
 # ghostty
@@ -104,7 +104,23 @@ This AppImage supports the following architectures:
 
 ### 🛠️ Troubleshooting
 
-- If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues.
+**Known Issues**
+
+1. **Failed to create EGL Display**
+   **Fix (Interim):** Fallback to x11 backend by running the AppImage from one of the below following options,
+
+   ```bash
+   # Option 1
+   ❯ GDK_BACKEND=x11 ./Ghostty-${VERSION}-${ARCH}.AppImage
+
+   # Option 2
+   ❯ export GDK_BACKEND=x11
+   ❯ ./Ghostty-${VERSION}-${ARCH}.AppImage
+
+   # Option 3: Add `export GDK_BACKEND=x11` to your .bashrc or .zshrc and launch the appimage normally
+   ```
+
+_If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues_
 
 ## 🤝 Contributing
 

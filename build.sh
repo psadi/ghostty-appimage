@@ -89,9 +89,7 @@ cat <<'EOF' >./AppRun
 
 HERE="$(dirname "$(readlink -f "$0")")"
 unset ARGV0
-
 export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
-
 exec "${HERE}"/ld-linux.so --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
 EOF
 
