@@ -111,17 +111,12 @@ This AppImage supports the following architectures:
 - **x86_64**: Widely used in modern desktops and servers, supporting 64-bit processing.
 - **aarch64**: 64-bit ARM architecture, planned for future support in cloud computing environments.
 
-## ❓ What's Next?
-
-- [x] Provide AppImages for other supported architectures
-- [ ] Submit AppImage(s) to [AppImageHub](https://appimage.github.io/)
-- [ ] Dependency caching in ci for a faster release cycle
-
 ### 🛠️ Troubleshooting
 
 **Known Issues**
 
 1. **Failed to create EGL Display**
+
    **Fix (Interim):** Fallback to x11 backend by running the AppImage from one of the below following options,
 
    ```bash
@@ -133,6 +128,17 @@ This AppImage supports the following architectures:
    ❯ ./Ghostty-${VERSION}-${ARCH}.AppImage
 
    # Option 3: Add `export GDK_BACKEND=x11` to your .bashrc or .zshrc and launch the appimage normally
+   ```
+
+1. **[TERMINFO](https://ghostty.org/docs/help/terminfo) `xterm-ghostty` not-set/breaks functionality**
+
+   **Fix:** Set the TERMINFO value to `xterm-256color` at runtime by running the AppImage as follows,
+
+   ```bash
+   # Option 1
+   ❯ TERM=xterm-256color ./Ghostty-${VERSION}-${ARCH}.AppImage
+
+   # Option 2: Add `export TERM=xterm-256color` to your .bashrc or .zshrc and launch the appimage normally
    ```
 
 _If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues_
