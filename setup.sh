@@ -23,29 +23,42 @@ if command -v jq >/dev/null 2>&1; then
 	fi
 fi
 
-# update & install os base dependencies
-buildPkgs="build-essential libonig-dev libbz2-dev pandoc wget fuse libfuse2t64 file zsync appstream"
+# Update & install OS base dependencies
+rm /etc/apt/apt.conf.d/docker-clean
+buildPkgs="apt-utils build-essential libonig-dev libbz2-dev pandoc wget fuse libfuse2t64 file zsync appstream"
 ghosttyPkgs="libgtk-4-dev libadwaita-1-dev"
-apt-get -qq update && apt-get -qq -y upgrade && apt-get -qq -y install ${buildPkgs} ${ghosttyPkgs}
+apt-get -qq update && apt-get -qq -y upgrade
+apt-get -qq -y --download-only install ${buildPkgs} ${ghosttyPkgs}
+apt -qq -y install ${buildPkgs} ${ghosttyPkgs}
 
-# download & install other dependencies
+# Download & install other dependencies
 # appimagetool: https://github.com/AppImage/appimagetool
-wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage"
-install "appimagetool-${ARCH}.AppImage" /usr/local/bin/appimagetool
+if [ ! -f '/usr/local/bin/appimagetool' ]; then
+	wget -q "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage" -O /tmp/appimagetool.AppImage
+	chmod +x /tmp/appimagetool.AppImage
+	mv /tmp/appimagetool.AppImage /usr/local/bin/appimagetool
+fi
 
 # minisign: https://github.com/jedisct1/minisign
-wget -q "${MINISIGN_URL}" -O "minisign-linux.tar.gz"
-tar -xzf "minisign-linux.tar.gz"
-mv minisign-linux/"${ARCH}"/minisign /usr/local/bin
+if [ ! -f '/usr/local/bin/minisign' ]; then
+	wget -q "${MINISIGN_URL}" -O /tmp/minisign-linux.tar.gz
+	tar -xzf /tmp/minisign-linux.tar.gz -C /tmp
+	mv /tmp/minisign-linux/"${ARCH}"/minisign /usr/local/bin
+fi
 
 # zig: https://ziglang.org
-wget -q "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
-tar -xf "zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz" -C /opt
-ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
+if [ ! -d "/opt/zig-linux-${ARCH}-${ZIG_VERSION}" ]; then
+	wget -q "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz" -O /tmp/zig-linux.tar.xz
+	tar -xf /tmp/zig-linux.tar.xz -C /opt
+	ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
+fi
 
-# cleanup
-rm -r \
-	"appimagetool-${ARCH}.AppImage" \
-	"minisign-linux.tar.gz" \
-	"minisign-linux" \
-	"zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
+# Cleanup
+rm -rf \
+	/tmp/appimagetool.AppImage \
+	/tmp/minisign-linux.tar.gz \
+	/tmp/minisign-linux \
+	/tmp/zig-linux.tar.xz
+
+# Reset DEBIAN_FRONTEND to default
+unset DEBIAN_FRONTEND

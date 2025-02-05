@@ -32,6 +32,22 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Cache dependencies
+        id: cache-ghostty
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/apt/archives
+            /var/lib/apt/lists
+            /tmp/offline-cache
+            /usr/local/bin/appimagetool
+            /usr/local/bin/minisign
+            /usr/local/bin/zig
+            /opt
+          key: ${{ runner.os }}-${{ matrix.arch }}-ghostty-${{ hashFiles('**/setup.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.arch }}-ghostty-
+
       - name: Setup Build Env
         run: ./setup.sh
 
