@@ -43,24 +43,15 @@
   <url type="help">https://ghostty.org/docs/about</url>
   <url type="bugtracker">https://github.com/ghostty-org/ghostty/issues</url>
 
-<!-- tbd
-  <screenshots>
-    <screenshot type="default">
-      <caption>Use background image attachments</caption>
-      <image>https://ghostty.org/tbd-screenshot.png</image>
-    </screenshot>
-  </screenshots>
--->
-
   <developer id="com.mitchellh">
     <name>Mitchell Hashimoto</name>
   </developer>
 
   <releases>
-    <release version="v1.0.1+1" date="2025-01-09">
+    <release>
       <description>
         <p>
-          Initial AppImage build.
+          Release Notes: https://ghostty.org/docs/install/release-notes
         </p>
       </description>
     </release>
