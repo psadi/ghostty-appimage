@@ -47,6 +47,21 @@
     <name>Mitchell Hashimoto</name>
   </developer>
 
+  <provides>
+    <binary>ghostty</binary>
+  </provides>
+
+  <categories>
+    <catagory>System</catagory>
+    <catagory>TerminalEmulator</catagory>
+  </categories>
+
+  <keywords>
+    <keyword>terminal</keyword>
+    <keyword>tty</keyword>
+    <keyword>pty</keyword>
+  </keywords>
+
   <releases>
     <release>
       <description>

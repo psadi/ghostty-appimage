@@ -20,7 +20,7 @@ TMP_DIR="/tmp/ghostty-build"
 APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
-APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
+APPDATA_FILE="${PWD}/assets/ghostty.metainfo.xml"
 DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
 
 rm -rf "${TMP_DIR}"
@@ -101,7 +101,7 @@ if [ -z "$VERSION" ]; then
 	exit 1
 fi
 
-cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
+cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.metainfo.xml"
 
 # Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
 cp "${DESKTOP_FILE}" "usr/share/applications/com.mitchellh.ghostty.desktop"
