@@ -4,18 +4,7 @@ set -e
 
 export ARCH="$(uname -m)"
 
-GHOSTTY_VERSION="1.1.0"
-
-# Detect latest version numbers when jq is available.
-if command -v jq >/dev/null 2>&1; then
-	if [ "$1" = "latest" ]; then
-		GHOSTTY_VERSION="$(
-			curl -s https://api.github.com/repos/ghostty-org/ghostty/tags |
-				jq '[.[] | select(.name != "tip") | .name | ltrimstr("v")] | sort_by(split(".") | map(tonumber)) | last'
-		)"
-	fi
-fi
-
+GHOSTTY_VERSION="$(cat VERSION)"
 TMP_DIR="/tmp/ghostty-build"
 APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
@@ -77,11 +66,13 @@ case "${ARCH}" in
 	;;
 esac
 
-cp -v /usr/lib/${ARCH}-linux-gnu/libpthread.so.0 ./usr/lib
+cp -v /usr/lib/libpthread.so.0 ./usr/lib
 
 if ! mv ./usr/lib/${ld_linux} ./ld-linux.so; then
 	cp -v /usr/lib/${ARCH}-linux-gnu/${ld_linux} ./ld-linux.so
 fi
+
+strip -s -R .comment --strip-unneeded ./usr/lib/lib*
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
 cat <<'EOF' >./AppRun

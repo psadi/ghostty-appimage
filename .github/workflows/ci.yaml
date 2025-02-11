@@ -24,7 +24,7 @@ jobs:
             platform: linux/amd64
             runs-on: ubuntu-24.04
     container:
-      image: ${{ matrix.arch == 'aarch64' && 'arm64v8/ubuntu:24.04' || 'ubuntu:24.04' }}
+      image: ghcr.io/pkgforge-dev/archlinux:latest
       options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
     steps:
       - name: Checkout ghostty-appimage
@@ -37,12 +37,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            /var/cache/apt/archives
-            /var/lib/apt/lists
+            /var/cache/pacman
             /tmp/offline-cache
-            /usr/local/bin/appimagetool
-            /usr/local/bin/minisign
-            /usr/local/bin/zig
+            /usr/local/bin
             /opt
           key: ${{ runner.os }}-${{ matrix.arch }}-ghostty-${{ hashFiles('**/setup.sh') }}
           restore-keys: |
