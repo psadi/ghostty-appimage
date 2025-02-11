@@ -52,6 +52,39 @@ cd "${APP_DIR}"
 # bundle all libs
 ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
 
+# deploy opengl manually 💀
+cp -vPn /usr/lib/libdrm_amdgpu.so*    ./usr/lib
+cp -vPn /usr/lib/libdrm_intel.so*     ./usr/lib
+cp -vPn /usr/lib/libdrm_nouveau.so*   ./usr/lib
+cp -vPn /usr/lib/libdrm_radeon.so*    ./usr/lib
+cp -vPn /usr/lib/libdrm.so*           ./usr/lib
+cp -vPn /usr/lib/libedit.so*          ./usr/lib
+cp -vPn /usr/lib/libEGL.so*           ./usr/lib
+cp -vPn /usr/lib/libelf.so*           ./usr/lib
+cp -vPn /usr/lib/libelf-*             ./usr/lib
+cp -vPn /usr/lib/libgallium-*         ./usr/lib
+cp -vPn /usr/lib/libglapi.so*         ./usr/lib
+cp -vPn /usr/lib/libGLdispatch.so*    ./usr/lib
+cp -vPn /usr/lib/libGL.so*            ./usr/lib
+cp -vPn /usr/lib/libGLX_indirect.so*  ./usr/lib
+cp -vPn /usr/lib/libGLX_mesa.so*      ./usr/lib
+cp -vPn /usr/lib/libGLX.so*           ./usr/lib
+cp -vPn /usr/lib/libLLVM.so*          ./usr/lib
+cp -vPn /usr/lib/libX11.so*           ./usr/lib
+cp -vPn /usr/lib/libSPIRV-Tools.so*   ./usr/lib
+cp -vPn /usr/lib/libncursesw.so*      ./usr/lib
+cp -vPn /usr/lib/libpciaccess.so*     ./usr/lib
+cp -vPn /usr/lib/libsensors.so*       ./usr/lib
+cp -vPn /usr/lib/libX11-xcb.so*       ./usr/lib
+cp -vPn /usr/lib/libxcb-dri3.so*      ./usr/lib
+cp -vPn /usr/lib/libxcb-glx.so*       ./usr/lib
+cp -vPn /usr/lib/libxcb-present.so*   ./usr/lib
+cp -vPn /usr/lib/libxcb-randr.so*     ./usr/lib
+cp -vPn /usr/lib/libxcb-sync.so*      ./usr/lib
+cp -vPn /usr/lib/libxcb-xfixes.so*    ./usr/lib
+cp -vPn /usr/lib/libxshmfence.so*     ./usr/lib
+cp -vPn /usr/lib/libXxf86vm.so*       ./usr/lib
+
 # ld-linux contains x86-64 instead of x86_64
 case "${ARCH}" in
 "x86_64")
