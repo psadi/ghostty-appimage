@@ -53,10 +53,7 @@ cd "${APP_DIR}"
 ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
 
 # deploy opengl manually 💀
-cp -vPn /usr/lib/libdrm_amdgpu.so*    ./usr/lib
-cp -vPn /usr/lib/libdrm_intel.so*     ./usr/lib
-cp -vPn /usr/lib/libdrm_nouveau.so*   ./usr/lib
-cp -vPn /usr/lib/libdrm_radeon.so*    ./usr/lib
+cp -vPn /usr/lib/libdrm_*             ./usr/lib
 cp -vPn /usr/lib/libdrm.so*           ./usr/lib
 cp -vPn /usr/lib/libedit.so*          ./usr/lib
 cp -vPn /usr/lib/libEGL.so*           ./usr/lib
