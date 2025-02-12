@@ -25,7 +25,6 @@ jobs:
             runs-on: ubuntu-24.04
     container:
       image: ghcr.io/pkgforge-dev/archlinux:latest
-      options: "--privileged --cap-add SYS_ADMIN --device /dev/fuse"
     steps:
       - name: Checkout ghostty-appimage
         uses: actions/checkout@v4
