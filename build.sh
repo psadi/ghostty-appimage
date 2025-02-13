@@ -60,7 +60,7 @@ rm -rf ./usr/bin
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
 echo 'unset ARGV0' > ./.env
 echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >> ./.env
-ln ./sharun ./AppRun
+ln -s ./bin/ghostty ./AppRun
 ./sharun -g
 
 export VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
