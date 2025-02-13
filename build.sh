@@ -63,7 +63,7 @@ echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >> ./.env
 ln ./sharun ./AppRun
 ./sharun -g
 
-export VERSION="$(./AppRun --version 2>/dev/null | awk 'FNR==1 {print $2}')"
+export VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
 if [ -z "$VERSION" ]; then
 	echo "ERROR: Could not get version from ghostty binary"
 	exit 1
