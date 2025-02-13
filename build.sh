@@ -12,6 +12,7 @@ PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
 DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
+LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 
 rm -rf "${TMP_DIR}"
 
@@ -51,71 +52,16 @@ zig build \
 cd "${APP_DIR}"
 
 # bundle all libs
-ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
-
-# deploy opengl manually 💀
-cp -vPn /usr/lib/libdrm_*             ./usr/lib
-cp -vPn /usr/lib/libdrm.so*           ./usr/lib
-cp -vPn /usr/lib/libedit.so*          ./usr/lib
-cp -vPn /usr/lib/libEGL.so*           ./usr/lib
-cp -vPn /usr/lib/libelf.so*           ./usr/lib
-cp -vPn /usr/lib/libelf-*             ./usr/lib
-cp -vPn /usr/lib/libgallium-*         ./usr/lib
-cp -vPn /usr/lib/libglapi.so*         ./usr/lib
-cp -vPn /usr/lib/libGLdispatch.so*    ./usr/lib
-cp -vPn /usr/lib/libGL.so*            ./usr/lib
-cp -vPn /usr/lib/libGLX_indirect.so*  ./usr/lib
-cp -vPn /usr/lib/libGLX_mesa.so*      ./usr/lib
-cp -vPn /usr/lib/libGLX.so*           ./usr/lib
-cp -vPn /usr/lib/libLLVM.so*          ./usr/lib
-cp -vPn /usr/lib/libX11.so*           ./usr/lib
-cp -vPn /usr/lib/libSPIRV-Tools.so*   ./usr/lib
-cp -vPn /usr/lib/libncursesw.so*      ./usr/lib
-cp -vPn /usr/lib/libpciaccess.so*     ./usr/lib
-cp -vPn /usr/lib/libsensors.so*       ./usr/lib
-cp -vPn /usr/lib/libX11-xcb.so*       ./usr/lib
-cp -vPn /usr/lib/libxcb-dri3.so*      ./usr/lib
-cp -vPn /usr/lib/libxcb-glx.so*       ./usr/lib
-cp -vPn /usr/lib/libxcb-present.so*   ./usr/lib
-cp -vPn /usr/lib/libxcb-randr.so*     ./usr/lib
-cp -vPn /usr/lib/libxcb-sync.so*      ./usr/lib
-cp -vPn /usr/lib/libxcb-xfixes.so*    ./usr/lib
-cp -vPn /usr/lib/libxshmfence.so*     ./usr/lib
-cp -vPn /usr/lib/libXxf86vm.so*       ./usr/lib
-
-# ld-linux contains x86-64 instead of x86_64
-case "${ARCH}" in
-"x86_64")
-	ld_linux="ld-linux-x86-64.so.2"
-	;;
-"aarch64")
-	ld_linux="ld-linux-aarch64.so.1"
-	;;
-*)
-	echo "Unsupported ARCH: '${ARCH}'"
-	exit 1
-	;;
-esac
-
-cp -v /usr/lib/libpthread.so.0 ./usr/lib
-
-if ! mv ./usr/lib/${ld_linux} ./ld-linux.so; then
-	cp -v /usr/lib/${ARCH}-linux-gnu/${ld_linux} ./ld-linux.so
-fi
-
-strip -s -R .comment --strip-unneeded ./usr/lib/lib*
+wget "$LIB4BN" -O ./lib4bin
+chmod +x ./lib4bin
+xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty
+rm -rf ./usr/bin
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
-cat <<'EOF' >./AppRun
-#!/usr/bin/env sh
-
-HERE="$(dirname "$(readlink -f "$0")")"
-unset ARGV0
-export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
-exec "${HERE}"/ld-linux.so --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
-EOF
-
-chmod +x AppRun
+echo 'unset ARGV0' > ./.env
+echo 'export GHOSTTY_RESOURCES_DIR="${SHARUN_DIR}/usr/share/ghostty"' >> ./.env
+ln ./sharun ./AppRun
+./sharun -g
 
 export VERSION="$(./AppRun --version 2>/dev/null | awk 'FNR==1 {print $2}')"
 if [ -z "$VERSION" ]; then
