@@ -29,7 +29,7 @@ esac
 rm -rf "/usr/share/libalpm/hooks/package-cleanup.hook"
 
 # Update & install OS base dependencies
-buildPkgs="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils"
+buildPkgs="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace"
 ghosttyPkgs="gtk4 libadwaita"
 pacman -Syu --noconfirm
 pacman -Syw --noconfirm ${buildPkgs} ${ghosttyPkgs}
