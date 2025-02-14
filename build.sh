@@ -3,6 +3,7 @@
 set -e
 
 export ARCH="$(uname -m)"
+export APPIMAGE_EXTRACT_AND_RUN=1
 
 GHOSTTY_VERSION="$(cat VERSION)"
 TMP_DIR="/tmp/ghostty-build"
@@ -11,6 +12,7 @@ PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
 DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
+LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 
 rm -rf "${TMP_DIR}"
 
@@ -49,49 +51,6 @@ zig build \
 
 cd "${APP_DIR}"
 
-# bundle all libs
-ldd ./usr/bin/ghostty | awk -F"[> ]" '{print $4}' | xargs -I {} cp --update=none -v {} ./usr/lib
-
-# ld-linux contains x86-64 instead of x86_64
-case "${ARCH}" in
-"x86_64")
-	ld_linux="ld-linux-x86-64.so.2"
-	;;
-"aarch64")
-	ld_linux="ld-linux-aarch64.so.1"
-	;;
-*)
-	echo "Unsupported ARCH: '${ARCH}'"
-	exit 1
-	;;
-esac
-
-cp -v /usr/lib/libpthread.so.0 ./usr/lib
-
-if ! mv ./usr/lib/${ld_linux} ./ld-linux.so; then
-	cp -v /usr/lib/${ARCH}-linux-gnu/${ld_linux} ./ld-linux.so
-fi
-
-strip -s -R .comment --strip-unneeded ./usr/lib/lib*
-
-# Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
-cat <<'EOF' >./AppRun
-#!/usr/bin/env sh
-
-HERE="$(dirname "$(readlink -f "$0")")"
-unset ARGV0
-export GHOSTTY_RESOURCES_DIR="${HERE}/usr/share/ghostty"
-exec "${HERE}"/ld-linux.so --library-path "${HERE}"/usr/lib "${HERE}"/usr/bin/ghostty "$@"
-EOF
-
-chmod +x AppRun
-
-export VERSION="$(./AppRun --version 2>/dev/null | awk 'FNR==1 {print $2}')"
-if [ -z "$VERSION" ]; then
-	echo "ERROR: Could not get version from ghostty binary"
-	exit 1
-fi
-
 cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
 
 # Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
@@ -101,6 +60,24 @@ ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
 
 ln -s "usr/share/applications/com.mitchellh.ghostty.desktop" .
 ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
+
+# bundle all libs
+wget "$LIB4BN" -O ./lib4bin
+chmod +x ./lib4bin
+xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty /usr/lib/libEGL*
+rm -rf ./usr/bin
+
+# Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
+echo 'unset ARGV0' > ./.env
+echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >> ./.env
+ln -s ./bin/ghostty ./AppRun
+./sharun -g
+
+export VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
+if [ -z "$VERSION" ]; then
+	echo "ERROR: Could not get version from ghostty binary"
+	exit 1
+fi
 
 cd "${TMP_DIR}"
 
