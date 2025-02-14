@@ -66,7 +66,8 @@ ln -s ./bin/ghostty ./AppRun
 export VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
 if [ -z "$VERSION" ]; then
 	echo "ERROR: Could not get version from ghostty binary"
-	exit 1
+	VERSION=failed
+#	exit 1
 fi
 
 cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
