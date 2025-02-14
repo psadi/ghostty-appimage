@@ -45,28 +45,28 @@ rm -f ./llvm-libs.pkg.tar.zst
 # Download & install other dependencies
 # appimagetool: https://github.com/AppImage/appimagetool
 if [ ! -f '/usr/local/bin/appimagetool' ]; then
-	wget -q "${APPIMAGE_URL}" -O /tmp/appimagetool.AppImage
+	wget "${APPIMAGE_URL}" -O /tmp/appimagetool.AppImage
 	chmod +x /tmp/appimagetool.AppImage
 	mv /tmp/appimagetool.AppImage /usr/local/bin/appimagetool
 fi
 
 # minisign: https://github.com/jedisct1/minisign
 if [ ! -f '/usr/local/bin/minisign' ]; then
-	wget -q "${MINISIGN_URL}" -O /tmp/minisign-linux.tar.gz
+	wget "${MINISIGN_URL}" -O /tmp/minisign-linux.tar.gz
 	tar -xzf /tmp/minisign-linux.tar.gz -C /tmp
 	mv /tmp/minisign-linux/"${ARCH}"/minisign /usr/local/bin
 fi
 
 # zig: https://ziglang.org
 if [ ! -d "/opt/zig-linux-${ARCH}-${ZIG_VERSION}" ]; then
-	wget -q "${ZIG_URL}" -O /tmp/zig-linux.tar.xz
+	wget "${ZIG_URL}" -O /tmp/zig-linux.tar.xz
 	tar -xf /tmp/zig-linux.tar.xz -C /opt
 	ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
 fi
 
 # pandoc: https://github.com/jgm/pandoc
 if [ ! -f '/usr/local/bin/pandoc' ]; then
-	wget -q "${PANDOC_URL}" -O /tmp/pandoc-linux.tar.gz
+	wget "${PANDOC_URL}" -O /tmp/pandoc-linux.tar.gz
 	tar -xzf /tmp/pandoc-linux.tar.gz -C /tmp
 	mv /tmp/"pandoc-${PANDOC_VERSION}"/bin/* /usr/local/bin
 fi
