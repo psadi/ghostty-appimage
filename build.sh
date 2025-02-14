@@ -36,28 +36,26 @@ cd "${TMP_DIR}/ghostty-${GHOSTTY_VERSION}"
 sed -i 's/linkSystemLibrary2("bzip2", dynamic_link_opts)/linkSystemLibrary2("bz2", dynamic_link_opts)/' src/build/SharedDeps.zig
 
 # Fetch Zig Cache
-ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
+# TODO: Revert cache once upstream fixes fetch
+# ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/check-zig-cache.sh
 
 # Build Ghostty with zig
 zig build \
 	--summary all \
 	--prefix "${APP_DIR}/usr" \
-	--system /tmp/offline-cache/p \
 	-Doptimize=ReleaseFast \
 	-Dcpu=baseline \
 	-Dpie=true \
 	-Demit-docs \
 	-Dversion-string="${GHOSTTY_VERSION}"
+# --system /tmp/offline-cache/p \
 
 cd "${APP_DIR}"
 
 cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
-
-# Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
 cp "${DESKTOP_FILE}" "usr/share/applications/com.mitchellh.ghostty.desktop"
-# WezTerm has this, it might be useful.
-ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
 
+ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
 ln -s "usr/share/applications/com.mitchellh.ghostty.desktop" .
 ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
@@ -68,8 +66,8 @@ xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty /usr/lib/libEGL*
 rm -rf ./usr/bin
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
-echo 'unset ARGV0' > ./.env
-echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >> ./.env
+echo 'unset ARGV0' >./.env
+echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >>./.env
 ln -s ./bin/ghostty ./AppRun
 ./sharun -g
 
