@@ -12,7 +12,8 @@ PANDOC_BASE="https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}"
 MINISIGN_URL="https://github.com/jedisct1/minisign/releases/download/${MINISIGN_VERSION}/minisign-${MINISIGN_VERSION}-linux.tar.gz"
 APPIMAGE_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage"
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
-LLVM="https://github.com/pkgforge-dev/llvm-libs-debloated/releases/download/continuous/llvm-libs-nano-${ARCH}.pkg.tar.zst"
+LLVM_URL="$(wget https://api.github.com/repos/pkgforge-dev/llvm-libs-debloated/releases -O - \
+                | sed 's/[()",{} ]/\n/g' | grep -i "https.*nano.*$ARCH.pkg.tar.*" | head -1)"
 
 case "${ARCH}" in
 "x86_64")
@@ -37,7 +38,7 @@ pacman -Syw --noconfirm ${buildPkgs} ${ghosttyPkgs}
 pacman -Syq --needed --noconfirm ${buildPkgs} ${ghosttyPkgs}
 
 # Add debloated version of llvm-libs
-wget -q "$LLVM" -O ./llvm-libs.pkg.tar.zst
+wget "$LLVM_URL" -O ./llvm-libs.pkg.tar.zst
 pacman -U --noconfirm ./llvm-libs.pkg.tar.zst
 rm -f ./llvm-libs.pkg.tar.zst
 
