@@ -12,7 +12,7 @@ PANDOC_BASE="https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}"
 MINISIGN_URL="https://github.com/jedisct1/minisign/releases/download/${MINISIGN_VERSION}/minisign-${MINISIGN_VERSION}-linux.tar.gz"
 APPIMAGE_URL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage"
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
-LLVM="https://github.com/pkgforge-dev/llvm-libs-debloated/releases/download/continuous/llvm-libs-nano-x86_64.pkg.tar.zst"
+LLVM="https://github.com/pkgforge-dev/llvm-libs-debloated/releases/download/continuous/llvm-libs-nano-${ARCH}.pkg.tar.zst"
 
 case "${ARCH}" in
 "x86_64")
