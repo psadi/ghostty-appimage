@@ -64,7 +64,7 @@ ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 # bundle all libs
 wget "$LIB4BN" -O ./lib4bin
 chmod +x ./lib4bin
-xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty
+xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty /usr/lib/libEGL*
 rm -rf ./usr/bin
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
