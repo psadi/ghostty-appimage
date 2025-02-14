@@ -51,6 +51,16 @@ zig build \
 
 cd "${APP_DIR}"
 
+cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
+
+# Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
+cp "${DESKTOP_FILE}" "usr/share/applications/com.mitchellh.ghostty.desktop"
+# WezTerm has this, it might be useful.
+ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
+
+ln -s "usr/share/applications/com.mitchellh.ghostty.desktop" .
+ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
+
 # bundle all libs
 wget "$LIB4BN" -O ./lib4bin
 chmod +x ./lib4bin
@@ -66,19 +76,8 @@ ln -s ./bin/ghostty ./AppRun
 export VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
 if [ -z "$VERSION" ]; then
 	echo "ERROR: Could not get version from ghostty binary"
-	VERSION=failed
-#	exit 1
+	exit 1
 fi
-
-cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
-
-# Fix Gnome dock issues -- StartupWMClass attribute needs to be present.
-cp "${DESKTOP_FILE}" "usr/share/applications/com.mitchellh.ghostty.desktop"
-# WezTerm has this, it might be useful.
-ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
-
-ln -s "usr/share/applications/com.mitchellh.ghostty.desktop" .
-ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
 cd "${TMP_DIR}"
 
