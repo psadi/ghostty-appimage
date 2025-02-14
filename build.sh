@@ -34,7 +34,7 @@ cd "${TMP_DIR}/ghostty-${GHOSTTY_VERSION}"
 sed -i 's/linkSystemLibrary2("bzip2", dynamic_link_opts)/linkSystemLibrary2("bz2", dynamic_link_opts)/' src/build/SharedDeps.zig
 
 # Fetch Zig Cache
-ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
+ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/check-zig-cache.sh
 
 # Build Ghostty with zig
 zig build \
