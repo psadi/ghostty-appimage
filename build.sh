@@ -66,8 +66,9 @@ xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty /usr/lib/libEGL*
 rm -rf ./usr/bin
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
-echo 'unset ARGV0' >./.env
 echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >>./.env
+echo 'unset ARGV0' >>./.env
+
 ln -s ./bin/ghostty ./AppRun
 ./sharun -g
 
