@@ -37,10 +37,17 @@ pacman -Syq --needed --noconfirm ${buildPkgs} ${ghosttyPkgs}
 
 # Add debloated version of llvm-libs
 LLVM_URL="$(wget https://api.github.com/repos/pkgforge-dev/llvm-libs-debloated/releases -O - \
-                | sed 's/[()",{} ]/\n/g' | grep -i "https.*nano.*$ARCH.pkg.tar.*" | head -1)"
+                | sed 's/[()",{} ]/\n/g' | grep -i "https.*llvm-libs-nano.*$ARCH.pkg.tar.*" | head -1)"
 wget "$LLVM_URL" -O ./llvm-libs.pkg.tar.zst
 pacman -U --noconfirm ./llvm-libs.pkg.tar.zst
 rm -f ./llvm-libs.pkg.tar.zst
+
+# Add libxml2 version without libicudata dependency
+LIBXML_URL="$(wget https://api.github.com/repos/pkgforge-dev/llvm-libs-debloated/releases -O - \
+                | sed 's/[()",{} ]/\n/g' | grep -i "https.*libxml2.*$ARCH.pkg.tar.*" | head -1)"
+wget "$LIBXML_URL" -O ./libxml2.pkg.tar.zst
+pacman -U --noconfirm ./libxml2.pkg.tar.zst
+rm -f ./libxml2.pkg.tar.zst
 
 # Download & install other dependencies
 # appimagetool: https://github.com/AppImage/appimagetool
