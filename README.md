@@ -97,20 +97,6 @@ Since AppImages are self-contained executables, there is no formal installation 
 1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
 1. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
 
-## 🖥️ Supported System Architectures
-
-This AppImage supports the following architectures:
-
-| **#** | **Architecture** | **Status** | **Availability** |
-| :---: | ---------------- | :--------: | ---------------- |
-|   1   | x86_64           |     🟢     | Available        |
-|   2   | aarch64          |     🟢     | Available        |
-
-**Notes:**
-
-- **x86_64**: Widely used in modern desktops and servers, supporting 64-bit processing.
-- **aarch64**: 64-bit ARM architecture, planned for future support in cloud computing environments.
-
 ### 🛠️ Troubleshooting
 
 **Known Issues**
@@ -140,6 +126,10 @@ This AppImage supports the following architectures:
 
    # Option 2: Add `export TERM=xterm-256color` to your .bashrc or .zshrc and launch the appimage normally
    ```
+
+1. **Gtk-CRITICAL \*\*: 13:43:27.628: gtk_widget_unparent: assertion 'GTK_IS_WIDGET (widget)' failed**
+
+   **Fix:** Referenced in [#3267](https://github.com/ghostty-org/ghostty/discussions/3267), reported/resolved at [#32](https://github.com/psadi/ghostty-appimage/issues/32)
 
 _If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues_
 
