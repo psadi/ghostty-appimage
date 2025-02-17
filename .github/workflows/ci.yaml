@@ -1,5 +1,7 @@
-name: Build
+name: Build Ghostty AppImage
 on:
+  schedule:
+    - cron: "0 0 * * *"
   workflow_dispatch: {}
   pull_request:
     types: [opened, synchronize, reopened]
@@ -44,20 +46,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.arch }}-ghostty-
 
-      - name: Setup Build Env
+      - name: Setup Build Environment
         run: ./setup.sh
 
-      - name: Build Ghostty
-        run: ./build.sh
+      - name: Build Ghostty AppImage
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            sed -i 's/GHOSTTY_VERSION="$(cat VERSION)"/GHOSTTY_VERSION="tip"/' build.sh
+          fi
+          ./build.sh
 
-      - name: Upload Artifact
+      - name: Upload AppImage Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ghostty-appimage-${{ matrix.arch }}
           retention-days: 7
           path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
 
-      - name: Upload binaries to release
+      - name: Ghostty stable release
         if: ${{ github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
@@ -66,3 +72,15 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
+
+      - name: Ghostty Tip ("Nightly") release
+        uses: marvinpinto/action-automatic-releases@v1.2.1
+        if: ${{ github.event_name == 'schedule' }}
+        with:
+          title: Ghostty Tip ("Nightly")
+          automatic_release_tag: tip
+          prerelease: true
+          draft: false
+          files: |
+            /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
