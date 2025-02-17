@@ -20,8 +20,15 @@ mkdir -p -- "${TMP_DIR}" "${APP_DIR}/usr" "${APP_DIR}/usr/lib" "${APP_DIR}/usr/s
 
 cd "${TMP_DIR}"
 
-wget -q "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
-wget -q "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
+if [ $GHOSTTY_VERSION == "tip" ]; then
+	BUILD_DIR="ghostty-source"
+	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz" -O ghostty-${GHOSTTY_VERSION}.tar.gz
+	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz.minisig" -O ghostty-${GHOSTTY_VERSION}.tar.gz.minisig
+else
+	BUILD_DIR="ghostty-${GHOSTTY_VERSION}"
+	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
+	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
+fi
 
 minisign -V -m "ghostty-${GHOSTTY_VERSION}.tar.gz" -P "${PUB_KEY}" -s "ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 
@@ -31,7 +38,7 @@ tar -xzmf "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
 rm "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
-cd "${TMP_DIR}/ghostty-${GHOSTTY_VERSION}"
+cd "${TMP_DIR}/${BUILD_DIR}"
 
 sed -i 's/linkSystemLibrary2("bzip2", dynamic_link_opts)/linkSystemLibrary2("bz2", dynamic_link_opts)/' src/build/SharedDeps.zig
 
@@ -47,6 +54,8 @@ zig build \
 	-Dcpu=baseline \
 	-Dpie=true \
 	-Demit-docs \
+	-Dgtk-wayland=true \
+	-Dgtk-x11=true \
 	-Dversion-string="${GHOSTTY_VERSION}"
 # --system /tmp/offline-cache/p \
 
