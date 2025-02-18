@@ -13,6 +13,16 @@ UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/
 APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
 DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
+BUILD_ARGS="
+	--summary all \
+	--prefix ${APP_DIR}/usr \
+	-Doptimize=ReleaseFast \
+	-Dcpu=baseline \
+	-Dpie=true \
+	-Demit-docs \
+	-Dgtk-wayland=true \
+	-Dgtk-x11=true"
+# --system /tmp/offline-cache/p \
 
 rm -rf "${TMP_DIR}"
 
@@ -26,6 +36,7 @@ if [ $GHOSTTY_VERSION == "tip" ]; then
 	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz.minisig" -O ghostty-${GHOSTTY_VERSION}.tar.gz.minisig
 else
 	BUILD_DIR="ghostty-${GHOSTTY_VERSION}"
+	BUILD_ARGS="$BUILD_ARGS -Dversion-string=${GHOSTTY_VERSION}"
 	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
 	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 fi
@@ -40,24 +51,12 @@ rm "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
 cd "${TMP_DIR}/${BUILD_DIR}"
 
-sed -i 's/linkSystemLibrary2("bzip2", dynamic_link_opts)/linkSystemLibrary2("bz2", dynamic_link_opts)/' src/build/SharedDeps.zig
-
 # Fetch Zig Cache
 # TODO: Revert cache once upstream fixes fetch
 # ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/check-zig-cache.sh
 
 # Build Ghostty with zig
-zig build \
-	--summary all \
-	--prefix "${APP_DIR}/usr" \
-	-Doptimize=ReleaseFast \
-	-Dcpu=baseline \
-	-Dpie=true \
-	-Demit-docs \
-	-Dgtk-wayland=true \
-	-Dgtk-x11=true \
-	-Dversion-string="${GHOSTTY_VERSION}"
-# --system /tmp/offline-cache/p \
+zig build ${BUILD_ARGS}
 
 cd "${APP_DIR}"
 
