@@ -1,4 +1,4 @@
-name: Build Ghostty AppImage
+name: Build
 on:
   schedule:
     - cron: "0 0 * * *"
@@ -14,7 +14,7 @@ jobs:
       actions: read
       security-events: write
       contents: write
-    name: Build Ghostty (${{ matrix.arch }})
+    name: 👻 Build Ghostty (${{ matrix.arch }})
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
@@ -63,17 +63,36 @@ jobs:
           retention-days: 7
           path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
 
-      - name: Ghostty stable release
+  release_appimage:
+    name: 👻 Release Ghostty AppImage
+    needs:
+      - build_appimage
+    permissions:
+      actions: read
+      security-events: write
+      contents: write
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'release' || github.event_name == 'schedule' }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghostty-appimage-aarch64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghostty-appimage-x86_64
+
+      - name: Ghostty stable
         if: ${{ github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
+          file: "*.AppImage*"
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
 
-      - name: Ghostty Tip ("Nightly") release
+      - name: Ghostty Tip ("Nightly")
         uses: marvinpinto/action-automatic-releases@v1.2.1
         if: ${{ github.event_name == 'schedule' }}
         with:
@@ -82,5 +101,5 @@ jobs:
           prerelease: true
           draft: false
           files: |
-            /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
+            *.AppImage*
           repo_token: ${{ secrets.GITHUB_TOKEN }}
