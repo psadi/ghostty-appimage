@@ -2,6 +2,21 @@
 
 set -e
 
+libpixbuf_config() {
+	git clone https://github.com/fritzw/ld-preload-open.git
+	(
+		cd ld-preload-open
+		make all
+		mv ./path-mapping.so ../
+	)
+	rm -rf ld-preload-open
+	mv ./path-mapping.so ./shared/lib
+	mv ./shared/lib/gdk-pixbuf-2.0 ./
+	cp -rv gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader_svg.so ./shared/lib
+	echo 'path-mapping.so' >./.preload
+	echo 'PATH_MAPPING=/usr/lib/gdk-pixbuf-2.0:${SHARUN_DIR}/gdk-pixbuf-2.0' >>./.env
+}
+
 export ARCH="$(uname -m)"
 export APPIMAGE_EXTRACT_AND_RUN=1
 
@@ -15,7 +30,7 @@ DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 BUILD_ARGS="
 	--summary all \
-	--prefix ${APP_DIR}/usr \
+	--prefix ${APP_DIR} \
 	-Doptimize=ReleaseFast \
 	-Dcpu=baseline \
 	-Dpie=true \
@@ -26,7 +41,7 @@ BUILD_ARGS="
 
 rm -rf "${TMP_DIR}"
 
-mkdir -p -- "${TMP_DIR}" "${APP_DIR}/usr" "${APP_DIR}/usr/lib" "${APP_DIR}/usr/share/metainfo"
+mkdir -p -- "${TMP_DIR}" "${APP_DIR}/share/metainfo" "${APP_DIR}/shared/lib"
 
 cd "${TMP_DIR}"
 
@@ -58,23 +73,26 @@ cd "${TMP_DIR}/${BUILD_DIR}"
 # Build Ghostty with zig
 zig build ${BUILD_ARGS}
 
+# Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
 cd "${APP_DIR}"
 
-cp "${APPDATA_FILE}" "usr/share/metainfo/com.mitchellh.ghostty.appdata.xml"
-cp "${DESKTOP_FILE}" "usr/share/applications/com.mitchellh.ghostty.desktop"
+cp "${APPDATA_FILE}" "share/metainfo/com.mitchellh.ghostty.appdata.xml"
+cp "${DESKTOP_FILE}" "share/applications/com.mitchellh.ghostty.desktop"
 
-ln -s "com.mitchellh.ghostty.desktop" "usr/share/applications/ghostty.desktop"
-ln -s "usr/share/applications/com.mitchellh.ghostty.desktop" .
-ln -s "usr/share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
+ln -s "com.mitchellh.ghostty.desktop" "share/applications/ghostty.desktop"
+ln -s "share/applications/com.mitchellh.ghostty.desktop" .
+ln -s "share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
 # bundle all libs
 wget "$LIB4BN" -O ./lib4bin
 chmod +x ./lib4bin
-xvfb-run -a -- ./lib4bin -p -v -e -s -k ./usr/bin/ghostty /usr/lib/libEGL*
-rm -rf ./usr/bin
+xvfb-run -a -- ./lib4bin -p -v -e -s -k ./bin/ghostty /usr/lib/libEGL*
 
-# Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
-echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/usr/share/ghostty' >>./.env
+# preload libpixbufloader /w ld-preload-open as svg icons breaks
+# either on ghostty tab bar or gnome-text-editor while config edit or both :(
+libpixbuf_config
+
+echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/share/ghostty' >>./.env
 echo 'unset ARGV0' >>./.env
 
 ln -s ./bin/ghostty ./AppRun
