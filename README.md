@@ -25,6 +25,12 @@ This repository provides build scripts to create a Universal AppImage for [Ghost
 1. Download the latest AppImage from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
 2. Follow the installation instructions below to run the AppImage.
 
+## 📦 Builds
+
+1. Ghostty AppImages are available for both x86_64 and aarch64 systems.
+1. Stable builds are based on upstream releases, with minor fixes and patches released as version+1 tags.
+1. Daily nightly builds, based on the upstream tip releases, are available as pre-releases in the [releases](https://github.com/psadi/ghostty-appimage/releases/tag/tip) section.
+
 ## ⚙️ Installation
 
 ### Command Line (Manual)
@@ -100,21 +106,6 @@ Since AppImages are self-contained executables, there is no formal installation 
 ### 🛠️ Troubleshooting
 
 **Known Issues**
-
-1. **Failed to create EGL Display**
-
-   **Fix (Interim):** Fallback to x11 backend by running the AppImage from one of the below following options,
-
-   ```bash
-   # Option 1
-   ❯ GDK_BACKEND=x11 ./Ghostty-${VERSION}-${ARCH}.AppImage
-
-   # Option 2
-   ❯ export GDK_BACKEND=x11
-   ❯ ./Ghostty-${VERSION}-${ARCH}.AppImage
-
-   # Option 3: Add `export GDK_BACKEND=x11` to your .bashrc or .zshrc and launch the appimage normally
-   ```
 
 1. **[TERMINFO](https://ghostty.org/docs/help/terminfo) `xterm-ghostty` not-set/breaks functionality**
 
