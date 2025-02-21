@@ -2,21 +2,6 @@
 
 set -e
 
-libpixbuf_config() {
-	git clone https://github.com/fritzw/ld-preload-open.git
-	(
-		cd ld-preload-open
-		make all
-		mv ./path-mapping.so ../
-	)
-	rm -rf ld-preload-open
-	mv ./path-mapping.so ./shared/lib
-	mv ./shared/lib/gdk-pixbuf-2.0 ./
-	cp -rv gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader_svg.so ./shared/lib
-	echo 'path-mapping.so' >./.preload
-	echo 'PATH_MAPPING=/usr/lib/gdk-pixbuf-2.0:${SHARUN_DIR}/gdk-pixbuf-2.0' >>./.env
-}
-
 export ARCH="$(uname -m)"
 export APPIMAGE_EXTRACT_AND_RUN=1
 
@@ -27,7 +12,6 @@ PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
 UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
 APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
 DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
-LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 BUILD_ARGS="
 	--summary all \
 	--prefix ${APP_DIR} \
@@ -84,14 +68,17 @@ ln -s "share/applications/com.mitchellh.ghostty.desktop" .
 ln -s "share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
 # bundle all libs
-wget "$LIB4BN" -O ./lib4bin
-chmod +x ./lib4bin
-xvfb-run -a -- ./lib4bin -p -v -e -s -k ./bin/ghostty /usr/lib/libEGL*
+xvfb-run -a -- lib4bin -p -v -e -s -k ./bin/ghostty /usr/lib/libEGL*
 
 # preload libpixbufloader /w ld-preload-open as svg icons breaks
 # either on ghostty tab bar or gnome-text-editor while config edit or both :(
-libpixbuf_config
+mv ./shared/lib/gdk-pixbuf-2.0 ./
+cp -rv /opt/path-mapping.so ./shared/lib/
+cp -rv gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader_svg.so ./shared/lib/
 
+echo 'path-mapping.so' >./.preload
+
+echo 'PATH_MAPPING=/usr/lib/gdk-pixbuf-2.0:${SHARUN_DIR}/gdk-pixbuf-2.0' >>./.env
 echo 'GHOSTTY_RESOURCES_DIR=${SHARUN_DIR}/share/ghostty' >>./.env
 echo 'unset ARGV0' >>./.env
 
