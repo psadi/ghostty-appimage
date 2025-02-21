@@ -10,9 +10,8 @@ jobs:
   buid_base_image:
     name: 👻 Build Ghossty Base Image
     permissions:
-      actions: read
-      security-events: write
-      contents: write
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Debloat Runner
@@ -31,7 +30,7 @@ jobs:
           set +x ; set +e
           DOCKER_TAG="v$(date +'%Y.%m.%d')" && export DOCKER_TAG="$DOCKER_TAG"
           echo "DOCKER_TAG=$DOCKER_TAG" >> "${GITHUB_ENV}"
-          echo "GHCR_NAME=ghcr.io/${{ github.repository_owner }}/ghostty-base" >> "${GITHUB_ENV}"
+          echo "GHCR_NAME=ghcr.io/${{ github.repository }}" >> "${GITHUB_ENV}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
