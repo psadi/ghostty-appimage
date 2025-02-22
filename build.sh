@@ -21,7 +21,6 @@ BUILD_ARGS="
 	-Demit-docs \
 	-Dgtk-wayland=true \
 	-Dgtk-x11=true"
-# --system /tmp/offline-cache/p \
 
 rm -rf "${TMP_DIR}"
 
@@ -35,7 +34,7 @@ if [ $GHOSTTY_VERSION == "tip" ]; then
 	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz.minisig" -O ghostty-${GHOSTTY_VERSION}.tar.gz.minisig
 else
 	BUILD_DIR="ghostty-${GHOSTTY_VERSION}"
-	BUILD_ARGS="$BUILD_ARGS -Dversion-string=${GHOSTTY_VERSION}"
+	BUILD_ARGS="${BUILD_ARGS} -Dversion-string=${GHOSTTY_VERSION}"
 	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
 	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 fi
@@ -51,8 +50,10 @@ rm "ghostty-${GHOSTTY_VERSION}.tar.gz"
 cd "${TMP_DIR}/${BUILD_DIR}"
 
 # Fetch Zig Cache
-# TODO: Revert cache once upstream fixes fetch
-# ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/check-zig-cache.sh
+if [ -f './nix/build-support/fetch-zig-cache.sh' ]; then
+	BUILD_ARGS="${BUILD_ARGS} --system /tmp/offline-cache/p"
+	ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
+fi
 
 # Build Ghostty with zig
 zig build ${BUILD_ARGS}
@@ -69,6 +70,8 @@ ln -s "share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
 # bundle all libs
 xvfb-run -a -- lib4bin -p -v -e -s -k ./bin/ghostty /usr/lib/libEGL*
+
+sleep 1
 
 # preload libpixbufloader /w ld-preload-open as svg icons breaks
 # either on ghostty tab bar or gnome-text-editor while config edit or both :(
