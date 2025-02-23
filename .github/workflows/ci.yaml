@@ -41,7 +41,8 @@ jobs:
         with:
           path: |
             /tmp/offline-cache
-          key: ${{ runner.os }}-${{ matrix.arch }}-ghostty-${{ hashFiles('**/setup.sh') }}
+            /root/.cache/zig
+          key: ${{ runner.os }}-${{ matrix.arch }}-ghostty-${{ hashFiles('**/VERSION') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.arch }}-ghostty-
 
