@@ -50,12 +50,13 @@ rm "ghostty-${GHOSTTY_VERSION}.tar.gz"
 cd "${TMP_DIR}/${BUILD_DIR}"
 
 # Fetch Zig Cache
-if [ -f './nix/build-support/fetch-zig-cache.sh' ]; then
-	BUILD_ARGS="${BUILD_ARGS} --system /tmp/offline-cache/p"
-	ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
-fi
+# if [ -f './nix/build-support/fetch-zig-cache.sh' ]; then
+# 	ZIG_GLOBAL_CACHE_DIR=/tmp/offline-cache ./nix/build-support/fetch-zig-cache.sh
+# 	BUILD_ARGS="${BUILD_ARGS} --system /tmp/offline-cache/p"
+# fi
 
 # Build Ghostty with zig
+echo " BUILD_ARGS: '${BUILD_ARGS}"
 zig build ${BUILD_ARGS}
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
