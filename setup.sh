@@ -17,7 +17,7 @@ LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/con
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
 LIB4BIN_URL="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 SHARUN_URL="${GITHUB_BASE}/VHSgunzo/sharun/releases/download/${SHARUN_VERSION}/sharun-${ARCH}"
-URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-lite-${ARCH}"
+URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-squashfs-lite-${ARCH}"
 
 case "${ARCH}" in
 "x86_64")
