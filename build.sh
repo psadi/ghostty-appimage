@@ -99,4 +99,4 @@ fi
 cd "${TMP_DIR}"
 
 # create app image
-appimagetool -u "${UPINFO}" "${APP_DIR}"
+appimagetool -u "${UPINFO}" "${APP_DIR}" --runtime-file /usr/local/bin/uruntime
