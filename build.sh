@@ -99,4 +99,10 @@ fi
 cd "${TMP_DIR}"
 
 # create app image
+URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/latest/download/uruntime-appimage-squashfs-lite-${ARCH}"
+if [ ! -f '/usr/local/bin/uruntime' ]; then
+	wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
+	chmod +x /usr/local/bin/uruntime
+fi
+
 appimagetool -u "${UPINFO}" "${APP_DIR}" --runtime-file /usr/local/bin/uruntime
