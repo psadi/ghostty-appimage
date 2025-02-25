@@ -70,9 +70,10 @@ ln -s "share/applications/com.mitchellh.ghostty.desktop" .
 ln -s "share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
 
 # bundle all libs
-xvfb-run -a -- lib4bin -p -v -e -s -k ./bin/ghostty /usr/lib/libEGL*
-
-sleep 1
+xvfb-run -a -- lib4bin -p -v -e -s -k \
+	./bin/ghostty \
+	/usr/lib/libEGL* \
+	/usr/lib/gdk-pixbuf-*/*/*/*
 
 # preload libpixbufloader /w ld-preload-open as svg icons breaks
 # either on ghostty tab bar or gnome-text-editor while config edit or both :(
