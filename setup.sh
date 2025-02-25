@@ -87,9 +87,8 @@ if [ ! -f '/usr/local/bin/sharun' ]; then
 fi
 
 if [ ! -f '/usr/local/bin/uruntime' ]; then
-	wget "${URUNTIME_URL}" -O /tmp/uruntime
-	chmod +x /tmp/uruntime
-	mv /tmp/uruntime /usr/local/bin/uruntime
+	wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
+	chmod +x /usr/local/bin/uruntime
 fi
 
 if [ ! -f '/opt/path-mapping.so' ]; then
