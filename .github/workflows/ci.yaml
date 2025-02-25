@@ -49,7 +49,7 @@ jobs:
       - name: Build Ghostty AppImage
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
-            sed -i 's/GHOSTTY_VERSION="$(cat VERSION)"/GHOSTTY_VERSION="tip"/' build.sh
+            echo "tip" > VERSION
           fi
           ./build.sh
 

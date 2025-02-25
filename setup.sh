@@ -36,7 +36,7 @@ case "${ARCH}" in
 esac
 
 # Update & install OS base dependencies
-buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git"
+buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git blueprint-compiler"
 ghosttyDeps="gtk4 libadwaita"
 pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
 pacman -Scc --noconfirm
