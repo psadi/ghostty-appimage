@@ -56,7 +56,8 @@ if [ -f './nix/build-support/fetch-zig-cache.sh' ]; then
 fi
 
 # Build Ghostty with zig
-echo " BUILD_ARGS: '${BUILD_ARGS}"
+echo "BUILD_ARGS: >-"
+echo "${BUILD_ARGS}" | xargs -n 2 | sed 's/^/\t/'
 zig build ${BUILD_ARGS}
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
@@ -99,4 +100,4 @@ fi
 cd "${TMP_DIR}"
 
 # create app image
-appimagetool -u "${UPINFO}" "${APP_DIR}"
+appimagetool -u "${UPINFO}" "${APP_DIR}" --runtime-file /usr/local/bin/uruntime
