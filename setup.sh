@@ -8,6 +8,7 @@ ZIG_VERSION="0.13.0"
 PANDOC_VERSION="3.6.3"
 MINISIGN_VERSION="0.11"
 SHARUN_VERSION="v0.3.9"
+URUNTIME_VERSION="v0.1.5"
 
 GITHUB_BASE="https://github.com"
 PANDOC_BASE="${GITHUB_BASE}/jgm/pandoc/releases/download/${PANDOC_VERSION}"
@@ -17,6 +18,7 @@ LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/con
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
 LIB4BIN_URL="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 SHARUN_URL="${GITHUB_BASE}/VHSgunzo/sharun/releases/download/${SHARUN_VERSION}/sharun-${ARCH}"
+URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/download/${URUNTIME_VERSION}/uruntime-appimage-squashfs-lite-${ARCH}"
 
 case "${ARCH}" in
 "x86_64")
@@ -83,6 +85,11 @@ fi
 if [ ! -f '/usr/local/bin/sharun' ]; then
 	wget "${SHARUN_URL}" -O /usr/local/bin/sharun
 	chmod +x /usr/local/bin/sharun
+fi
+
+if [ ! -f '/usr/local/bin/uruntime' ]; then
+	wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
+	chmod +x /usr/local/bin/uruntime
 fi
 
 if [ ! -f '/opt/path-mapping.so' ]; then
