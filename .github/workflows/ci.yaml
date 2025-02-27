@@ -1,4 +1,8 @@
 name: Build
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   schedule:
     - cron: "0 0 * * *"
@@ -90,13 +94,14 @@ jobs:
           file_glob: true
 
       - name: Ghostty Tip ("Nightly")
-        uses: marvinpinto/action-automatic-releases@v1.2.1
-        if: ${{ github.event_name == 'schedule' }}
+        if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
+        uses: softprops/action-gh-release@v2.2.1
         with:
-          title: Ghostty Tip ("Nightly")
-          automatic_release_tag: tip
+          name: '👻 Ghostty Tip ("Nightly")'
           prerelease: true
-          draft: false
+          tag_name: tip
+          target_commitish: ${{ github.sha }}
+          make_latest: false
+          generate_release_notes: true
           files: |
             *.AppImage*
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
