@@ -10,6 +10,7 @@ on:
   pull_request:
     paths-ignore:
       - "**/README.md"
+      - "**/VERSION"
     types: [opened, synchronize, reopened]
   release:
     types: [published]
