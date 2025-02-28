@@ -56,25 +56,40 @@ sudo install ./Ghostty-${VERSION}-${ARCH}.AppImage /usr/local/bin/ghostty
 install ./Ghostty-${VERSION}-${ARCH}.AppImage $HOME/.local/bin/ghostty
 
 # Now you can run Ghostty from anywhere using the command:
-# ghostty
+ghostty
 ```
-
-**Note:** By using [**AM**](https://github.com/ivan-hc/AM)/[**AppMan**](https://github.com/ivan-hc/AppMan), **PATH** config done automatically when you install appimages with it.
 
 ### Command Line (Auto)
 
-Ghostty AppImage is also available via [**Soar**](https://github.com/pkgforge/soar) which automatically handles the install, upgrade and desktop integration process
+Ghostty AppImage can be accessed through [**Soar**](https://github.com/pkgforge/soar) or [**AM**](https://github.com/ivan-hc/AM)/[**AppMan**](https://github.com/ivan-hc/AppMan). These tools automate the installation process, configure the PATH, and integrate with your desktop environment when installing AppImages.
 
-```bash
-# Install
-soar install ghostty
+1. Using [**Soar**](https://github.com/pkgforge/soar)
 
-# Upgrade
-soar update ghostty
+   ```bash
+   # Install
+   soar install ghostty
 
-# Uninstall
-soar remove ghostty
-```
+   # Upgrade
+   soar update ghostty
+
+   # Uninstall
+   soar remove ghostty
+   ```
+
+1. Using [**AM**](https://github.com/ivan-hc/AM) or [**AppMan**](https://github.com/ivan-hc/AppMan) _(Choose one as appropriate)_
+
+   ```bash
+   # Install
+   am -i ghostty
+
+   # Upgrade
+   am -u ghostty
+
+   # Uninstall
+   am -r ghostty
+   ```
+
+_Note: Ensure you have the necessary permissions to run these commands. For more detailed usage, refer to the documentation of each tool._
 
 ### Graphical
 
@@ -101,9 +116,9 @@ Since AppImages are self-contained executables, there is no formal installation 
 **Update automatically:**
 
 1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
-1. Use a higher level tool that uses AppImageUpdate, like [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
+1. Use a higher level tool that uses AppImageUpdate, like [Soar](https://github.com/pkgforge/soar), [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
 
-### 🛠️ Troubleshooting
+## 🛠️ Troubleshooting
 
 **Known Issues**
 
