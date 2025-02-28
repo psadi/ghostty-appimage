@@ -27,9 +27,9 @@ This repository provides build scripts to create a Universal AppImage for [Ghost
 
 ## 📦 Builds
 
-1. Ghostty AppImages are available for both x86_64 and aarch64 systems.
-1. Stable builds are based on upstream releases, with minor fixes and patches released as version+1 tags.
-1. Daily nightly builds, based on the upstream [tip releases](https://github.com/ghostty-org/ghostty/releases/tag/tip), are available as pre-releases in the [releases](https://github.com/psadi/ghostty-appimage/releases/tag/tip) section.
+1. Ghostty AppImages are available for both **x86_64** and **aarch64** systems.
+1. Stable builds are based on upstream releases, with minor fixes and patches released as **version+1** tag(s).
+1. Daily nightly builds, based on the upstream [tip releases](https://github.com/ghostty-org/ghostty/releases/tag/tip), are built and released at **00:00 UTC every day** and are available as pre-releases in the [releases](https://github.com/psadi/ghostty-appimage/releases/tag/tip) section.
 
 ## ⚙️ Installation
 

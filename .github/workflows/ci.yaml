@@ -101,7 +101,5 @@ jobs:
           prerelease: true
           tag_name: tip
           target_commitish: ${{ github.sha }}
-          make_latest: false
-          generate_release_notes: true
           files: |
             *.AppImage*
