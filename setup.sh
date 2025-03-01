@@ -97,6 +97,9 @@ rm -rf /usr/local/bin/uruntime
 wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
 chmod +x /usr/local/bin/uruntime
 
+# keep the uruntime mountpoint (speeds up launch time)
+sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' /usr/local/bin/uruntime
+
 # ld-preload-open: https://github.com/fritzw/ld-preload-open
 rm -rf /opt/path-mapping.so
 git clone https://github.com/fritzw/ld-preload-open.git
