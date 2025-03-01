@@ -1,14 +1,26 @@
 #!/bin/sh
 
-set -e
+set -ex
+
+get_latest_gh_release() {
+
+	local gh_ref="${1}"
+	local version
+	curl -s "https://api.github.com/repos/${gh_ref}/releases/latest" | jq -r .tag_name
+}
+
+# Update & install OS base dependencies
+buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git jq"
+ghosttyDeps="gtk4 libadwaita blueprint-compiler"
+pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
 
 export ARCH="$(uname -m)"
 
 ZIG_VERSION="0.13.0"
-PANDOC_VERSION="3.6.3"
-MINISIGN_VERSION="0.11"
-SHARUN_VERSION="v0.3.9"
-URUNTIME_VERSION="v0.1.5"
+PANDOC_VERSION="$(get_latest_gh_release 'jgm/pandoc')"
+MINISIGN_VERSION="$(get_latest_gh_release 'jedisct1/minisign')"
+SHARUN_VERSION="$(get_latest_gh_release 'VHSgunzo/sharun')"
+URUNTIME_VERSION="$(get_latest_gh_release 'VHSgunzo/uruntime')"
 
 GITHUB_BASE="https://github.com"
 PANDOC_BASE="${GITHUB_BASE}/jgm/pandoc/releases/download/${PANDOC_VERSION}"
@@ -37,73 +49,68 @@ case "${ARCH}" in
 	;;
 esac
 
-# Update & install OS base dependencies
-buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git blueprint-compiler"
-ghosttyDeps="gtk4 libadwaita"
-pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
-pacman -Scc --noconfirm
-
 # Debloated llvm and libxml2 without libicudata
 wget "${LLVM_URL}" -O /tmp/llvm-libs.pkg.tar.zst
 wget "${LIBXML_URL}" -O /tmp/libxml2.pkg.tar.zst
 pacman -U --noconfirm /tmp/llvm-libs.pkg.tar.zst /tmp/libxml2.pkg.tar.zst
 
 # Download & install other dependencies
-# appimagetool: https://github.com/AppImage/appimagetool
-if [ ! -f '/usr/local/bin/appimagetool' ]; then
-	wget "${APPIMAGE_URL}" -O /tmp/appimagetool.AppImage
-	chmod +x /tmp/appimagetool.AppImage
-	mv /tmp/appimagetool.AppImage /usr/local/bin/appimagetool
-fi
-
-# minisign: https://github.com/jedisct1/minisign
-if [ ! -f '/usr/local/bin/minisign' ]; then
-	wget "${MINISIGN_URL}" -O /tmp/minisign-linux.tar.gz
-	tar -xzf /tmp/minisign-linux.tar.gz -C /tmp
-	mv /tmp/minisign-linux/"${ARCH}"/minisign /usr/local/bin
-fi
-
 # zig: https://ziglang.org
 if [ ! -d "/opt/zig-linux-${ARCH}-${ZIG_VERSION}" ]; then
+	rm -rf /opt/zig*
+	unlink /usr/local/bin/zig || true
 	wget "${ZIG_URL}" -O /tmp/zig-linux.tar.xz
-	tar -xf /tmp/zig-linux.tar.xz -C /opt
+	tar -xJf /tmp/zig-linux.tar.xz -C /opt
 	ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
 fi
 
+# appimagetool: https://github.com/AppImage/appimagetool
+rm -rf /usr/local/bin/appimagetool
+wget "${APPIMAGE_URL}" -O /tmp/appimagetool.AppImage
+chmod +x /tmp/appimagetool.AppImage
+mv /tmp/appimagetool.AppImage /usr/local/bin/appimagetool
+
+# minisign: https://github.com/jedisct1/minisign
+rm -rf /usr/local/bin/minisign
+wget "${MINISIGN_URL}" -O /tmp/minisign-linux.tar.gz
+tar -xzf /tmp/minisign-linux.tar.gz -C /tmp
+mv /tmp/minisign-linux/"${ARCH}"/minisign /usr/local/bin
+
 # pandoc: https://github.com/jgm/pandoc
-if [ ! -f '/usr/local/bin/pandoc' ]; then
-	wget "${PANDOC_URL}" -O /tmp/pandoc-linux.tar.gz
-	tar -xzf /tmp/pandoc-linux.tar.gz -C /tmp
-	mv /tmp/"pandoc-${PANDOC_VERSION}"/bin/* /usr/local/bin
-fi
+rm -rf /usr/local/bin/pandoc*
+wget "${PANDOC_URL}" -O /tmp/pandoc-linux.tar.gz
+tar -xzf /tmp/pandoc-linux.tar.gz -C /tmp
+mv /tmp/"pandoc-${PANDOC_VERSION}"/bin/* /usr/local/bin
 
-if [ ! -f '/usr/local/bin/lib4bin' ]; then
-	wget "${LIB4BIN_URL}" -O /usr/local/bin/lib4bin
-	chmod +x /usr/local/bin/lib4bin
-fi
+# lib4bin: https://github.com/VHSgunzo/sharun/blob/main/lib4bin
+rm -rf /usr/local/bin/lib4bin
+wget "${LIB4BIN_URL}" -O /usr/local/bin/lib4bin
+chmod +x /usr/local/bin/lib4bin
 
-if [ ! -f '/usr/local/bin/sharun' ]; then
-	wget "${SHARUN_URL}" -O /usr/local/bin/sharun
-	chmod +x /usr/local/bin/sharun
-fi
+# sharun: https://github.com/VHSgunzo/sharun
+rm -rf /usr/local/bin/sharun
+wget "${SHARUN_URL}" -O /usr/local/bin/sharun
+chmod +x /usr/local/bin/sharun
 
-if [ ! -f '/usr/local/bin/uruntime' ]; then
-	wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
-	chmod +x /usr/local/bin/uruntime
-fi
+# uruntime: https://github.com/VHSgunzo/uruntime
+rm -rf /usr/local/bin/uruntime
+wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
+chmod +x /usr/local/bin/uruntime
 
-if [ ! -f '/opt/path-mapping.so' ]; then
-	git clone https://github.com/fritzw/ld-preload-open.git
-	(
-		cd ld-preload-open
-		make all
-		mv ./path-mapping.so ../
-	)
-	rm -rf ld-preload-open
-	mv ./path-mapping.so /opt/path-mapping.so
-fi
+# ld-preload-open: https://github.com/fritzw/ld-preload-open
+rm -rf /opt/path-mapping.so
+git clone https://github.com/fritzw/ld-preload-open.git
+(
+	cd ld-preload-open
+	make all
+	mv ./path-mapping.so ../
+)
+rm -rf ld-preload-open
+mv ./path-mapping.so /opt/path-mapping.so
 
 # Cleanup
+pacman -Scc --noconfirm
+
 rm -rf \
 	/tmp/appimagetool.AppImage \
 	/tmp/minisign-linux* \
