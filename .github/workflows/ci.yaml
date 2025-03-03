@@ -94,6 +94,14 @@ jobs:
           overwrite: true
           file_glob: true
 
+      - name: Tip Tag
+        if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -fa tip -m "Latest Continuous Release" ${GITHUB_SHA}
+          git push --force origin tip
+
       - name: Ghostty Tip ("Nightly")
         if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
         uses: softprops/action-gh-release@v2.2.1
