@@ -40,14 +40,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Tip Tag
-        if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -fa tip -m "Latest Continuous Release" ${GITHUB_SHA}
-          git push --force origin tip
-
       - name: Cache dependencies
         id: cache-ghostty
         uses: actions/cache@v4
@@ -73,16 +65,32 @@ jobs:
           retention-days: 7
           path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
 
-  release_appimage:
-    name: 👻 Release Ghostty AppImage
+  tag:
+    name: "👻 Tip Tag"
+    runs-on: ubuntu-latest
+    needs:
+      - build_appimage
+    if: ${{ github.event_name == 'schedule' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Tip Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -fa tip -m "Latest Continuous Release" ${GITHUB_SHA}
+          git push --force origin tip
+
+  release_stable:
+    name: 👻 Release Ghostty AppImage (Stable)
     needs:
       - build_appimage
     permissions:
       actions: read
-      security-events: write
       contents: write
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'release' || github.event_name == 'schedule' }}
+    if: ${{ github.event_name == 'release' }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -93,7 +101,6 @@ jobs:
           name: ghostty-appimage-x86_64
 
       - name: Ghostty stable
-        if: ${{ github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -102,6 +109,24 @@ jobs:
           overwrite: true
           file_glob: true
 
+  release_nightly:
+    name: 👻 Release Ghostty AppImage (Nightly)
+    needs:
+      - build_appimage
+      - tag
+    permissions:
+      actions: read
+      contents: write
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghostty-appimage-aarch64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ghostty-appimage-x86_64
       - name: Ghostty Tip ("Nightly")
         if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
         uses: softprops/action-gh-release@v2.2.1
