@@ -72,9 +72,7 @@ jobs:
       - build_appimage
     if: ${{ github.event_name == 'schedule' }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@v4 # zizmor: ignore[artipacked]
       - name: Tip Tag
         run: |
           git config user.name "github-actions[bot]"
