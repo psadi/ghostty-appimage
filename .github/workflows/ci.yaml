@@ -80,8 +80,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -fa test-tip -m "Latest Continuous Release" ${GITHUB_SHA}
-          git push --force origin test-tip
+          git tag -fa tip -m "Latest Continuous Release" ${GITHUB_SHA}
+          git push --force origin tip
 
   release_stable:
     name: 👻 Release Ghostty AppImage (Stable)
@@ -134,7 +134,7 @@ jobs:
         with:
           name: '👻 Ghostty Tip ("Nightly")'
           prerelease: true
-          tag_name: test-tip
+          tag_name: tip
           target_commitish: ${{ github.sha }}
           files: |
             *.AppImage*
