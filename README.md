@@ -33,7 +33,8 @@ This repository provides build scripts to create a Universal AppImage for [Ghost
 
 ## ⚙️ Installation
 
-### Command Line (Manual)
+<details>
+  <summary><b>Command Line (Manual)</b></summary>
 
 Run the following commands in your terminal:
 
@@ -59,7 +60,10 @@ install ./Ghostty-${VERSION}-${ARCH}.AppImage $HOME/.local/bin/ghostty
 ghostty
 ```
 
-### Command Line (Auto)
+</details>
+
+<details>
+  <summary><b>Command Line (Automatic)</b></summary>
 
 Ghostty AppImage can be accessed through [**Soar**](https://github.com/pkgforge/soar) or [**AM**](https://github.com/ivan-hc/AM)/[**AppMan**](https://github.com/ivan-hc/AppMan). These tools automate the installation process, configure the PATH, and integrate with your desktop environment when installing AppImages.
 
@@ -91,7 +95,10 @@ Ghostty AppImage can be accessed through [**Soar**](https://github.com/pkgforge/
 
 _Note: Ensure you have the necessary permissions to run these commands. For more detailed usage, refer to the documentation of each tool._
 
-### Graphical
+</details>
+
+<details>
+  <summary><b>Graphical (Manual)</b></summary>
 
 1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
 2. Locate the downloaded file in your file explorer (e.g., Nautilus, Thunar, PCManFM).
@@ -104,40 +111,54 @@ _Note: Ensure you have the necessary permissions to run these commands. For more
   <img src="./assets/2.png" alt="Step 2" width="384">
 </p>
 
+</details>
+
+<details>
+  <summary><b>Graphical (Automatic)</b></summary>
+
+Ghostty AppImage can be easily installed and managed using graphical tools such as [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher) and [Gear Lever](https://github.com/mijorus/gearlever).
+
+1. **Using [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher)**
+
+   For detailed instructions, please refer to the [AppImageLauncher documentation](https://docs.appimage.org/user-guide/run-appimages.html#appimagelauncher).
+
+>[!WARNING]
+>Please note that with the launch of AppImageLauncher v3.0.0, you have to use the alpha pre-releases as the stable release doesn't work with the static runtime
+>For more information please refer the [discussion](https://github.com/TheAssassin/AppImageLauncher/discussions/687) and the [comment](https://github.com/TheAssassin/AppImageLauncher/discussions/687#discussioncomment-12181060)
+
+2. **Using [Gear Lever](https://github.com/mijorus/gearlever)**
+
+   - Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
+   - Simply drag and drop the files from your file manager into the Gear Lever application.
+   - Follow the on-screen instructions to configure the setup as a one-time installation process.
+
+_Note: Ensure the necessary prerequsites are satisfied for these applicatios. For more detailed usage, refer to the documentation of each tool_
+
+   </details>
+
 ## ⏫ Updating
 
 Since AppImages are self-contained executables, there is no formal installation process beyond setting executable permissions.
 
-**Update manually:**
+<details>
+  <summary><b>Update (Manual)</b></summary>
 
 1. Download the latest AppImage package from the [releases](https://github.com/psadi/ghostty-appimage/releases) section.
 1. Follow the same steps as in the [Installation](#installation) section to make it executable and run it.
 
-**Update automatically:**
+</details>
+
+<details>
+  <summary><b>Update (Automatic)</b></summary>
 
 1. Use [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) which reads the update information in the AppImage. This is a low level tool.
 1. Use a higher level tool that uses AppImageUpdate, like [Soar](https://github.com/pkgforge/soar), [AM](https://github.com/ivan-hc/AM) or [appimaged](https://github.com/probonopd/go-appimage/blob/master/src/appimaged/README.md) daemon, these tools also automatically handle desktop integration.
 
+</details>
+
 ## 🛠️ Troubleshooting
 
-**Known Issues**
-
-1. **[TERMINFO](https://ghostty.org/docs/help/terminfo) `xterm-ghostty` not-set/breaks functionality**
-
-   **Fix:** Set the TERMINFO value to `xterm-256color` at runtime by running the AppImage as follows,
-
-   ```bash
-   # Option 1
-   ❯ TERM=xterm-256color ./Ghostty-${VERSION}-${ARCH}.AppImage
-
-   # Option 2: Add `export TERM=xterm-256color` to your .bashrc or .zshrc and launch the appimage normally
-   ```
-
-1. **Gtk-CRITICAL \*\*: 13:43:27.628: gtk_widget_unparent: assertion 'GTK_IS_WIDGET (widget)' failed**
-
-   **Fix:** Referenced in [#3267](https://github.com/ghostty-org/ghostty/discussions/3267), reported/resolved at [#32](https://github.com/psadi/ghostty-appimage/issues/32)
-
-_If you encounter any errors, check the terminal for error messages that may indicate missing dependencies or other issues_
+Refer [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) file
 
 ## 🤝 Contributing
 
