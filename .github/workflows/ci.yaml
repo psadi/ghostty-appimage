@@ -67,6 +67,7 @@ jobs:
 
   tag:
     name: "👻 Tip Tag"
+    if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
     permissions:
       actions: read
       security-events: write
