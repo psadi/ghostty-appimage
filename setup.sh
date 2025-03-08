@@ -11,7 +11,7 @@ get_latest_gh_release() {
 
 # Update & install OS base dependencies
 buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git jq"
-ghosttyDeps="gtk4 libadwaita blueprint-compiler"
+ghosttyDeps="gtk4 libadwaita blueprint-compiler gtk4-layer-shell"
 pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
 
 export ARCH="$(uname -m)"
