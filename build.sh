@@ -100,4 +100,7 @@ fi
 cd "${TMP_DIR}"
 
 # create app image
-appimagetool -u "${UPINFO}" "${APP_DIR}" --runtime-file /usr/local/bin/uruntime
+appimagetool --comp zstd \
+	--mksquashfs-opt -Xcompression-level --mksquashfs-opt 22 \
+	--mksquashfs-opt -b --mksquashfs-opt 1M \
+	-u "${UPINFO}" "${APP_DIR}" --runtime-file /usr/local/bin/uruntime
