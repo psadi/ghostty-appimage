@@ -25,12 +25,11 @@ URUNTIME_VERSION="$(get_latest_gh_release 'VHSgunzo/uruntime')"
 GITHUB_BASE="https://github.com"
 PANDOC_BASE="${GITHUB_BASE}/jgm/pandoc/releases/download/${PANDOC_VERSION}"
 MINISIGN_URL="${GITHUB_BASE}/jedisct1/minisign/releases/download/${MINISIGN_VERSION}/minisign-${MINISIGN_VERSION}-linux.tar.gz"
-APPIMAGE_URL="${GITHUB_BASE}/AppImage/appimagetool/releases/download/continuous/appimagetool-${ARCH}.AppImage"
+APPIMAGE_URL="${GITHUB_BASE}/pkgforge-dev/appimagetool-uruntime/releases/download/continuous/appimagetool-${ARCH}.AppImage"
 LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
 LIB4BIN_URL="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 SHARUN_URL="${GITHUB_BASE}/VHSgunzo/sharun/releases/download/${SHARUN_VERSION}/sharun-${ARCH}"
-URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/download/${URUNTIME_VERSION}/uruntime-appimage-squashfs-lite-${ARCH}"
 
 case "${ARCH}" in
 "x86_64")
@@ -91,14 +90,6 @@ chmod +x /usr/local/bin/lib4bin
 rm -rf /usr/local/bin/sharun
 wget "${SHARUN_URL}" -O /usr/local/bin/sharun
 chmod +x /usr/local/bin/sharun
-
-# uruntime: https://github.com/VHSgunzo/uruntime
-rm -rf /usr/local/bin/uruntime
-wget "${URUNTIME_URL}" -O /usr/local/bin/uruntime
-chmod +x /usr/local/bin/uruntime
-
-# keep the uruntime mountpoint (speeds up launch time)
-sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' /usr/local/bin/uruntime
 
 # ld-preload-open: https://github.com/fritzw/ld-preload-open
 rm -rf /opt/path-mapping.so
