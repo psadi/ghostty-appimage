@@ -34,7 +34,7 @@ jobs:
           set +x ; set +e
           DOCKER_TAG="v$(date +'%Y.%m.%d')" && export DOCKER_TAG="$DOCKER_TAG"
           echo "DOCKER_TAG=$DOCKER_TAG" >> "${GITHUB_ENV}"
-          echo "GHCR_NAME=ghcr.io/${{ github.repository }}" >> "${GITHUB_ENV}"
+          echo "GHCR_NAME=ghcr.io/psadi/ghostty-appimage" >> "${GITHUB_ENV}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
