@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -eux
 
 get_latest_gh_release() {
 

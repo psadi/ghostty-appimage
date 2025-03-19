@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -eux
 
 export ARCH="$(uname -m)"
 export APPIMAGE_EXTRACT_AND_RUN=1
@@ -47,6 +47,10 @@ tar -xzmf "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
 rm "ghostty-${GHOSTTY_VERSION}.tar.gz"
 
+if [ $GHOSTTY_VERSION == 'tip' ]; then
+	mv ghostty-* ghostty-source
+fi
+
 cd "${TMP_DIR}/${BUILD_DIR}"
 
 #Fetch Zig Cache
@@ -56,8 +60,6 @@ if [ -f './nix/build-support/fetch-zig-cache.sh' ]; then
 fi
 
 # Build Ghostty with zig
-echo "BUILD_ARGS: >-"
-echo "${BUILD_ARGS}" | xargs -n 2 | sed 's/^/\t/'
 zig build ${BUILD_ARGS}
 
 # Prepare AppImage -- Configure launcher script, metainfo and desktop file with icon.
