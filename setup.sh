@@ -12,11 +12,12 @@ get_latest_gh_release() {
 # Update & install OS base dependencies
 buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git jq"
 ghosttyDeps="gtk4 libadwaita blueprint-compiler gtk4-layer-shell"
+rm -rf "/usr/share/libalpm/hooks/package-cleanup.hook"
 pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
 
 export ARCH="$(uname -m)"
 
-ZIG_VERSION="0.13.0"
+ZIG_VERSION="#ZIG_VERSION"
 PANDOC_VERSION="$(get_latest_gh_release 'jgm/pandoc')"
 MINISIGN_VERSION="$(get_latest_gh_release 'jedisct1/minisign')"
 SHARUN_VERSION="$(get_latest_gh_release 'VHSgunzo/sharun')"
@@ -55,13 +56,11 @@ pacman -U --noconfirm /tmp/llvm-libs.pkg.tar.zst /tmp/libxml2.pkg.tar.zst
 
 # Download & install other dependencies
 # zig: https://ziglang.org
-if [ ! -d "/opt/zig-linux-${ARCH}-${ZIG_VERSION}" ]; then
-	rm -rf /opt/zig*
-	unlink /usr/local/bin/zig || true
-	wget "${ZIG_URL}" -O /tmp/zig-linux.tar.xz
-	tar -xJf /tmp/zig-linux.tar.xz -C /opt
-	ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
-fi
+rm -rf /opt/zig*
+unlink /usr/local/bin/zig || true
+wget "${ZIG_URL}" -O /tmp/zig-linux.tar.xz
+tar -xJf /tmp/zig-linux.tar.xz -C /opt
+ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
 
 # appimagetool: https://github.com/AppImage/appimagetool
 rm -rf /usr/local/bin/appimagetool
