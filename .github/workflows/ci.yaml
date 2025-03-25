@@ -33,7 +33,7 @@ jobs:
             platform: linux/amd64
             runs-on: ubuntu-24.04
     container:
-      image: ghcr.io/psadi/ghostty-appimage:latest
+      image: ghcr.io/pkgforge-dev/archlinux:latest
     steps:
       - name: Checkout ghostty-appimage
         uses: actions/checkout@v4
@@ -45,11 +45,23 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
+            /var/cache/pacman
             /tmp/offline-cache
             /root/.cache/zig
           key: ${{ runner.os }}-${{ matrix.arch }}-ghostty-${{ hashFiles('**/VERSION') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.arch }}-ghostty-
+
+      - name: Setup build environment
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            ZIG_VERSION=0.14.0
+          else
+            ZIG_VERSION=0.13.0
+          fi
+
+          sed -i "s/#ZIG_VERSION/${ZIG_VERSION}/g" setup.sh
+          ./setup.sh
 
       - name: Build Ghostty AppImage
         run: |
