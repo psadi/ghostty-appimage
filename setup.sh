@@ -11,7 +11,7 @@ get_latest_gh_release() {
 
 # Update & install OS base dependencies
 buildDeps="base-devel freetype2 oniguruma wget mesa file zsync appstream xorg-server-xvfb patchelf binutils strace git jq"
-ghosttyDeps="gtk4 libadwaita blueprint-compiler gtk4-layer-shell"
+ghosttyDeps="gtk4 libadwaita gtk4-layer-shell"
 rm -rf "/usr/share/libalpm/hooks/package-cleanup.hook"
 pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
 
@@ -26,11 +26,11 @@ URUNTIME_VERSION="$(get_latest_gh_release 'VHSgunzo/uruntime')"
 GITHUB_BASE="https://github.com"
 PANDOC_BASE="${GITHUB_BASE}/jgm/pandoc/releases/download/${PANDOC_VERSION}"
 MINISIGN_URL="${GITHUB_BASE}/jedisct1/minisign/releases/download/${MINISIGN_VERSION}/minisign-${MINISIGN_VERSION}-linux.tar.gz"
-APPIMAGE_URL="${GITHUB_BASE}/pkgforge-dev/appimagetool-uruntime/releases/download/continuous/appimagetool-${ARCH}.AppImage"
+URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/download/${URUNTIME_VERSION}/uruntime-appimage-dwarfs-${ARCH}"
 LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
-LIB4BIN_URL="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 SHARUN_URL="${GITHUB_BASE}/VHSgunzo/sharun/releases/download/${SHARUN_VERSION}/sharun-${ARCH}"
+LD_PRELOAD_OPEN="${GITHUB_BASE}/fritzw/ld-preload-open.git"
 
 case "${ARCH}" in
 "x86_64")
@@ -62,11 +62,11 @@ wget "${ZIG_URL}" -O /tmp/zig-linux.tar.xz
 tar -xJf /tmp/zig-linux.tar.xz -C /opt
 ln -s "/opt/zig-linux-${ARCH}-${ZIG_VERSION}/zig" /usr/local/bin/zig
 
-# appimagetool: https://github.com/AppImage/appimagetool
-rm -rf /usr/local/bin/appimagetool
-wget "${APPIMAGE_URL}" -O /tmp/appimagetool.AppImage
-chmod +x /tmp/appimagetool.AppImage
-mv /tmp/appimagetool.AppImage /usr/local/bin/appimagetool
+# uruntime: https://github.com/VHSgunzo/uruntime
+rm -rf /usr/local/bin/uruntime
+wget "${URUNTIME_URL}" -O /tmp/uruntime
+chmod +x /tmp/uruntime
+mv /tmp/uruntime /usr/local/bin/uruntime
 
 # minisign: https://github.com/jedisct1/minisign
 rm -rf /usr/local/bin/minisign
@@ -80,11 +80,6 @@ wget "${PANDOC_URL}" -O /tmp/pandoc-linux.tar.gz
 tar -xzf /tmp/pandoc-linux.tar.gz -C /tmp
 mv /tmp/"pandoc-${PANDOC_VERSION}"/bin/* /usr/local/bin
 
-# lib4bin: https://github.com/VHSgunzo/sharun/blob/main/lib4bin
-rm -rf /usr/local/bin/lib4bin
-wget "${LIB4BIN_URL}" -O /usr/local/bin/lib4bin
-chmod +x /usr/local/bin/lib4bin
-
 # sharun: https://github.com/VHSgunzo/sharun
 rm -rf /usr/local/bin/sharun
 wget "${SHARUN_URL}" -O /usr/local/bin/sharun
@@ -92,7 +87,7 @@ chmod +x /usr/local/bin/sharun
 
 # ld-preload-open: https://github.com/fritzw/ld-preload-open
 rm -rf /opt/path-mapping.so
-git clone https://github.com/fritzw/ld-preload-open.git
+git clone "${LD_PRELOAD_OPEN}"
 (
 	cd ld-preload-open
 	make all
