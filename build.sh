@@ -99,7 +99,7 @@ fi
 cd "${TMP_DIR}"
 
 # create app image
-cp $(which uruntime) ./uruntime
+cp $(command -v uruntime) ./uruntime
 
 # persist mount for faster launch times
 sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' ./uruntime
@@ -113,7 +113,7 @@ echo "Generating AppImage"
 	--no-history --no-create-timestamp \
 	--compression zstd:level=22 -S26 -B32 \
 	--header uruntime -i "${APP_DIR}" \
-	-o Ghostty-"${VERSION}"-anylinux-"${ARCH}".AppImage
+	-o Ghostty-"${VERSION}"-"${ARCH}".AppImage
 
 echo "Generating Zsync file"
 zsyncmake *.AppImage -u *.AppImage
