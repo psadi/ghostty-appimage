@@ -55,13 +55,12 @@ jobs:
       - name: Setup build environment
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
-            ZIG_VERSION=0.14.0
+            export ZIG_VERSION=0.14.0
           else
-            ZIG_VERSION=0.13.0
+            export ZIG_VERSION=0.13.0
           fi
 
-          sed -i "s/#ZIG_VERSION/${ZIG_VERSION}/g" setup.sh
-          ./setup.sh
+          ZIG_VERSION=$ZIG_VERSION ./setup.sh
 
       - name: Build Ghostty AppImage
         run: |
@@ -89,7 +88,18 @@ jobs:
       - build_appimage
     steps:
       - uses: actions/checkout@v4 # zizmor: ignore[artipacked]
-      - name: Tip Tag
+
+      - name: Clean-up Old Release Assets
+        run: |
+          gh release view tip --json assets --jq '.assets[].name' | while read -r asset; do
+            if [ -n "$asset" ]; then
+              gh release delete-asset tip "${asset}" -y
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create 'tip' tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
