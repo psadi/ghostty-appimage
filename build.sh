@@ -69,6 +69,7 @@ cp "${DESKTOP_FILE}" "share/applications/com.mitchellh.ghostty.desktop"
 ln -s "com.mitchellh.ghostty.desktop" "share/applications/ghostty.desktop"
 ln -s "share/applications/com.mitchellh.ghostty.desktop" .
 ln -s "share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .
+ln -s "share/icons/hicolor/256x256/apps/com.mitchellh.ghostty.png" .DirIcon
 
 # bundle all libs
 xvfb-run -a -- sharun l -p -v -e -s -k \
