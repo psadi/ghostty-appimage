@@ -27,6 +27,7 @@ GITHUB_BASE="https://github.com"
 PANDOC_BASE="${GITHUB_BASE}/jgm/pandoc/releases/download/${PANDOC_VERSION}"
 MINISIGN_URL="${GITHUB_BASE}/jedisct1/minisign/releases/download/${MINISIGN_VERSION}/minisign-${MINISIGN_VERSION}-linux.tar.gz"
 URUNTIME_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/download/${URUNTIME_VERSION}/uruntime-appimage-dwarfs-${ARCH}"
+URUNTIME_LITE_URL="${GITHUB_BASE}/VHSgunzo/uruntime/releases/download/${URUNTIME_VERSION}/uruntime-appimage-dwarfs-lite-${ARCH}"
 LLVM_BASE="${GITHUB_BASE}/pkgforge-dev/llvm-libs-debloated/releases/download/continuous"
 ZIG_URL="https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ARCH}-${ZIG_VERSION}.tar.xz"
 SHARUN_URL="${GITHUB_BASE}/VHSgunzo/sharun/releases/download/${SHARUN_VERSION}/sharun-${ARCH}"
@@ -37,11 +38,13 @@ case "${ARCH}" in
 	PANDOC_URL="${PANDOC_BASE}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz"
 	LLVM_URL="${LLVM_BASE}/llvm-libs-nano-x86_64.pkg.tar.zst"
 	LIBXML_URL="${LLVM_BASE}/libxml2-iculess-x86_64.pkg.tar.zst"
+	MESA_URL="${LLVM_BASE}/mesa-mini-x86_64.pkg.tar.zst"
 	;;
 "aarch64")
 	PANDOC_URL="${PANDOC_BASE}/pandoc-${PANDOC_VERSION}-linux-arm64.tar.gz"
 	LLVM_URL="${LLVM_BASE}/llvm-libs-nano-aarch64.pkg.tar.xz"
 	LIBXML_URL="${LLVM_BASE}/libxml2-iculess-aarch64.pkg.tar.xz"
+	MESA_URL="${LLVM_BASE}/mesa-mini-aarch64.pkg.tar.xz"
 	;;
 *)
 	echo "Unsupported ARCH: '${ARCH}'"
@@ -52,7 +55,8 @@ esac
 # Debloated llvm and libxml2 without libicudata
 wget "${LLVM_URL}" -O /tmp/llvm-libs.pkg.tar.zst
 wget "${LIBXML_URL}" -O /tmp/libxml2.pkg.tar.zst
-pacman -U --noconfirm /tmp/llvm-libs.pkg.tar.zst /tmp/libxml2.pkg.tar.zst
+wget "${MESA_URL}" -O /tmp/mesa-mini.pkg.tar.zst
+pacman -U --noconfirm /tmp/*.pkg.tar.zst
 
 # Download & install other dependencies
 # zig: https://ziglang.org
@@ -67,6 +71,11 @@ rm -rf /usr/local/bin/uruntime
 wget "${URUNTIME_URL}" -O /tmp/uruntime
 chmod +x /tmp/uruntime
 mv /tmp/uruntime /usr/local/bin/uruntime
+
+rm -rf /usr/local/bin/uruntime-lite
+wget "${URUNTIME_LITE_URL}" -O /tmp/uruntime-lite
+chmod +x /tmp/uruntime-lite
+mv /tmp/uruntime-lite /usr/local/bin/uruntime-lite
 
 # minisign: https://github.com/jedisct1/minisign
 rm -rf /usr/local/bin/minisign
@@ -104,5 +113,4 @@ rm -rf \
 	/tmp/minisign-linux* \
 	/tmp/zig-linux.tar.xz \
 	/tmp/pandoc* \
-	/tmp/llvm-libs.pkg.tar.zst \
-	/tmp/libxml2.pkg.tar.zst
+	/tmp/*.pkg.tar.zst

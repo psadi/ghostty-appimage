@@ -101,19 +101,20 @@ cd "${TMP_DIR}"
 
 # create app image
 cp $(command -v uruntime) ./uruntime
+cp $(command -v uruntime-lite) ./uruntime-lite
 
 # persist mount for faster launch times
-sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' ./uruntime
+sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' ./uruntime-lite
 
 # update info
-./uruntime --appimage-addupdinfo "${UPINFO}"
+./uruntime-lite --appimage-addupdinfo "${UPINFO}"
 
 echo "Generating AppImage"
 ./uruntime --appimage-mkdwarfs -f \
 	--set-owner 0 --set-group 0 \
 	--no-history --no-create-timestamp \
-	--compression zstd:level=22 -S26 -B32 \
-	--header uruntime -i "${APP_DIR}" \
+	--compression zstd:level=22 -S26 -B8 \
+	--header uruntime-lite -i "${APP_DIR}" \
 	-o Ghostty-"${VERSION}"-"${ARCH}".AppImage
 
 echo "Generating Zsync file"
