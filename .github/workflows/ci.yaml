@@ -153,6 +153,25 @@ jobs:
           overwrite: true
           file_glob: true
 
+  soar_nest_stable:
+    needs:
+      - release_stable
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+      packages: write
+    uses: "pkgforge/soarpkgs/.github/workflows/matrix_builds.yaml@main"
+    with:
+      host: "ALL"
+      sbuild-url: "https://raw.githubusercontent.com/pkgforge/soarpkgs/refs/heads/main/packages/ghostty/appimage.pkgforge-dev.stable.yaml"
+      ghcr-url: "ghcr.io/${{ github.repository }}/stable"
+      pkg-family: "ghostty"
+      banner: true
+      debug: true
+      logs: true
+      rebuild: true
+
   release_nightly:
     name: 👻 Release Ghostty AppImage (Nightly)
     if: ${{ github.event_name == 'schedule' && github.ref_name == 'main' }}
@@ -189,3 +208,22 @@ jobs:
           target_commitish: ${{ github.sha }}
           files: |
             *.AppImage*
+
+  soar_nest_nightly:
+    needs:
+      - release_nightly
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+      packages: write
+    uses: "pkgforge/soarpkgs/.github/workflows/matrix_builds.yaml@main"
+    with:
+      host: "ALL"
+      sbuild-url: "https://raw.githubusercontent.com/pkgforge/soarpkgs/refs/heads/main/packages/ghostty-nightly/appimage.pkgforge-dev.nightly.yaml"
+      ghcr-url: "ghcr.io/${{ github.repository }}/nightly"
+      pkg-family: "ghostty-nightly"
+      banner: true
+      debug: true
+      logs: true
+      rebuild: true
