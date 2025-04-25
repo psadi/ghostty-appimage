@@ -25,6 +25,21 @@ This repository provides build scripts to create a Universal AppImage for [Ghost
 1. Stable builds are based on upstream releases, with minor fixes and patches released as **version+1** tag(s).
 1. Daily nightly builds, based on the upstream [tip releases](https://github.com/ghostty-org/ghostty/releases/tag/tip), are built and released at **00:00 UTC every day** and are available as pre-releases in the [releases](https://github.com/pkgforge-dev/ghostty-appimage/releases/tag/tip) section.
 
+## 🧪 Experimental Builds (GLFW)
+
+> [!WARNING]
+>
+> Please read the following carefully before using them
+>
+> - These builds are available for both stable and daily nightly releases
+> - These builds use the experimental flag `-Dapp-runtime=glfw`
+> - They do not include bundled dependencies for Gtk and libadwaita
+> - Window decorations may not work on non-GNOME desktop environments (No CSD)
+> - Tabs and splits are not functional
+> - The terminal inspector does not work
+> - The build size is drastically reduced (around 20 MB) as 80+ dependencies are not bundled
+> - Please refer to the [**upstream warning notice**](https://github.com/ghostty-org/ghostty/blob/main/PACKAGING.md#build-options) for further info
+
 ## ⚙️ Installation
 
 <details>
