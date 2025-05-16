@@ -2,14 +2,12 @@
 
 set -eux
 
-export ARCH="$(uname -m)"
-export APPIMAGE_EXTRACT_AND_RUN=1
-
+ARCH="$(uname -m)"
 GHOSTTY_VERSION="$(cat VERSION)"
 TMP_DIR="/tmp/ghostty-build"
 APP_DIR="${TMP_DIR}/ghostty.AppDir"
 PUB_KEY="RWQlAjJC23149WL2sEpT/l0QKy7hMIFhYdQOFy0Z7z7PbneUgvlsnYcV"
-UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|*$ARCH.AppImage.zsync"
+UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY}" | tr '/' '|')|latest|Ghostty-*$ARCH.AppImage.zsync"
 APPDATA_FILE="${PWD}/assets/ghostty.appdata.xml"
 DESKTOP_FILE="${PWD}/assets/ghostty.desktop"
 LIBS2BUNDLE="./bin/ghostty /usr/lib/libEGL*"
@@ -29,18 +27,18 @@ mkdir -p -- "${TMP_DIR}" "${APP_DIR}/share/metainfo" "${APP_DIR}/shared/lib"
 
 cd "${TMP_DIR}"
 
-if [ $GHOSTTY_VERSION == "tip" ]; then
-	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz" -O ghostty-${GHOSTTY_VERSION}.tar.gz
-	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz.minisig" -O ghostty-${GHOSTTY_VERSION}.tar.gz.minisig
-	GHOSTTY_VERSION="$(tar -tf ghostty-${GHOSTTY_VERSION}.tar.gz --wildcards "*zig.zon.txt" | awk -F'[-/]' '{print $2"-"$3}')"
-	mv ghostty-tip.tar.gz ghostty-${GHOSTTY_VERSION}.tar.gz
-	mv ghostty-tip.tar.gz.minisig ghostty-${GHOSTTY_VERSION}.tar.gz.minisig
+if [ "${GHOSTTY_VERSION}" = "tip" ]; then
+	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz" -O "ghostty-${GHOSTTY_VERSION}.tar.gz"
+	wget "https://github.com/ghostty-org/ghostty/releases/download/tip/ghostty-source.tar.gz.minisig" -O "ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
+	GHOSTTY_VERSION="$(tar -tf "ghostty-${GHOSTTY_VERSION}.tar.gz" --wildcards "*zig.zon.txt" | awk -F'[-/]' '{print $2"-"$3}')"
+	mv ghostty-tip.tar.gz "ghostty-${GHOSTTY_VERSION}.tar.gz"
+	mv ghostty-tip.tar.gz.minisig "ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 else
 	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz"
 	wget "https://release.files.ghostty.org/${GHOSTTY_VERSION}/ghostty-${GHOSTTY_VERSION}.tar.gz.minisig"
 fi
 
-if [ $GLFW == true ]; then
+if [ "${GLFW}" = true ]; then
 	BUILD_ARGS="${BUILD_ARGS} -Dapp-runtime=glfw"
 else
 	LIBS2BUNDLE="${LIBS2BUNDLE} /usr/lib/gdk-pixbuf-*/*/*/*"
@@ -83,7 +81,7 @@ xvfb-run -a -- sharun l -p -v -e -s -k ${LIBS2BUNDLE}
 
 # preload libpixbufloader /w ld-preload-open as svg icons breaks
 # either on ghostty tab bar or gnome-text-editor while config edit or both :(
-if [ $GLFW == false ]; then
+if [ "${GLFW}" = false ]; then
 	mv ./shared/lib/gdk-pixbuf-2.0 ./
 	cp -rv /opt/path-mapping.so ./shared/lib/
 	cp -rv gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader_svg.so ./shared/lib/
@@ -98,23 +96,24 @@ echo 'unset ARGV0' >>./.env
 ln -s ./bin/ghostty ./AppRun
 ./sharun -g
 
-export VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
-if [ -z "$VERSION" ]; then
+VERSION="$(./AppRun --version | awk 'FNR==1 {print $2}')"
+if [ -z "${VERSION}" ]; then
 	echo "ERROR: Could not get version from ghostty binary"
 	exit 1
 fi
 
 GHOSTTY_APPIMAGE="Ghostty-${VERSION}-${ARCH}.AppImage"
 
-if [ $GLFW == true ]; then
-	GHOSTTY_APPIMAGE="Ghostty-Glfw-${VERSION}-${ARCH}.AppImage"
+if [ "${GLFW}" = true ]; then
+	UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|Ghossty_*$ARCH.AppImage.zsync"
+	GHOSTTY_APPIMAGE="Ghostty_Glfw-${VERSION}-${ARCH}.AppImage"
 fi
 
 cd "${TMP_DIR}"
 
 # create app image
-cp $(command -v uruntime) ./uruntime
-cp $(command -v uruntime-lite) ./uruntime-lite
+cp "$(command -v uruntime)" ./uruntime
+cp "$(command -v uruntime-lite)" ./uruntime-lite
 
 # persist mount for faster launch times
 sed -i 's|URUNTIME_MOUNT=[0-9]|URUNTIME_MOUNT=0|' ./uruntime-lite
@@ -131,4 +130,4 @@ echo "Generating AppImage"
 	-o "${GHOSTTY_APPIMAGE}"
 
 echo "Generating Zsync file"
-zsyncmake *.AppImage -u *.AppImage
+zsyncmake ./*.AppImage -u ./*.AppImage
