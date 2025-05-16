@@ -105,7 +105,7 @@ fi
 GHOSTTY_APPIMAGE="Ghostty-${VERSION}-${ARCH}.AppImage"
 
 if [ "${GLFW}" = true ]; then
-	UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|Ghossty_*$ARCH.AppImage.zsync"
+	UPINFO="gh-releases-zsync|$(echo "${GITHUB_REPOSITORY:-no-user/no-repo}" | tr '/' '|')|latest|Ghostty_*$ARCH.AppImage.zsync"
 	GHOSTTY_APPIMAGE="Ghostty_Glfw-${VERSION}-${ARCH}.AppImage"
 fi
 
