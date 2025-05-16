@@ -4,8 +4,7 @@ set -eux
 
 get_latest_gh_release() {
 
-	local gh_ref="${1}"
-	local version
+	gh_ref="${1}"
 	curl -s "https://api.github.com/repos/${gh_ref}/releases/latest" | jq -r .tag_name
 }
 
@@ -15,7 +14,7 @@ ghosttyDeps="gtk4 libadwaita gtk4-layer-shell"
 rm -rf "/usr/share/libalpm/hooks/package-cleanup.hook"
 pacman -Syuq --needed --noconfirm --noprogressbar ${buildDeps} ${ghosttyDeps}
 
-export ARCH="$(uname -m)"
+ARCH="$(uname -m)"
 
 ZIG_VERSION="${ZIG_VERSION:-0.13.0}"
 PANDOC_VERSION="$(get_latest_gh_release 'jgm/pandoc')"

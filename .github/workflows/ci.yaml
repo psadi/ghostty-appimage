@@ -86,7 +86,7 @@ jobs:
         with:
           name: ghostty-appimage-${{ matrix.arch }}${{ matrix.glfw == true && '-glfw' || '' }}
           retention-days: 7
-          path: /tmp/ghostty-build/Ghostty-*-${{ matrix.arch }}.AppImage*
+          path: /tmp/ghostty-build/Ghostty*-${{ matrix.arch }}.AppImage*
 
   tag:
     name: "👻 Tip Tag"
@@ -115,7 +115,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -fa tip -m "Latest Continuous Release" ${GITHUB_SHA}
+          git tag -fa tip -m "Latest Continuous Release" "${GITHUB_SHA}"
           git push --force origin tip
 
   release_stable:
